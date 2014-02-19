@@ -1,0 +1,103 @@
+// Place all the styles related to the InternetVisualization controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+* {
+    moz-box-sizing: border-box;
+    box-sizing: border-box;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif
+}
+    
+.header{
+    padding: 15px 0;
+    width: 100%;
+    min-width: 1000px;
+}
+
+.header-bar{
+    width: 960px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.anng-logo-wrapper {
+    position: relative;
+    float: left;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.anng-logo {
+    background-image: #FFFFFF url('main-logo.jpg');
+    width: 100px;
+    height: 50px;
+}
+
+.command-bar {
+    width: 770px;
+    position:relative;
+    float:left;
+    margin: 3px, 15px, 6px, 0;
+}
+
+.top-nav {
+    list-style: none;
+    position: absolute;
+    top: 0;
+    opacity: 1;
+    z-index: 1;
+    margin-top: 0px;
+    margin-right: 0;
+    right: 0;
+    padding: 0;
+}
+
+.top-nav>li {
+    float:left;
+}
+
+.top-nav>li+li{
+    margin-left: 5px;
+}
+
+.top-nav>li>a{
+    display: block;
+    padding: 5px;
+    font-size: 15px;
+    font-weight: bold;
+    color: #333333;
+    text-decoration: none;
+}
+
+.top-nav>li>a:hover{
+    color: orange;
+}
+.site-banner {
+    background-image: url(internet_graph.png);
+    width:100%;
+    width: 1000px;
+    min-height: 300px;
+    margin: auto;
+}
+
+.site-dataset-list {
+    padding-top: 100px;
+    width: 100%
+    margin-left:auto;
+}
+
+.main-nav>li>a{
+    font-size: 50px;
+    text-decoration: none;
+    color: #333333;
+    font-weight: bold;
+
+}
+
+.main-nav>li>a:hover{
+    color: orange;
+}
+
+.main-nav{
+    text-decoration: none;
+    list-style-type: none;
+}
