@@ -1,5 +1,6 @@
 InternetArchiveVisualization::Application.routes.draw do
   root :to => "internet_visualization#index"
+  get "/congressional_dataset", :to=>"internet_visualization#viz_interface"
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
