@@ -30,7 +30,7 @@ ActiveRecord::Schema.define(:version => 20140220064852) do
 
   create_table "congress_tld_aggregates", :force => true do |t|
     t.string  "node_tld"
-    t.string  "year"
+    t.integer "year"
     t.integer "count"
   end
 

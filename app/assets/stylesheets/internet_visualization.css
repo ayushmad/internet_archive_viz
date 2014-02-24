@@ -80,3 +80,96 @@
     text-decoration: none;
     list-style-type: none;
 }
+/*
+ * These are the visualization related CSS files they need to be arranged later
+ */
+
+#VizContainer {
+  float: left;
+  /* border: solid 1px;*/
+  width: 1400px;
+  height: 800px;
+  padding: 5px;
+  border: black solid 1px;
+  border-radius: 20px;
+
+}
+
+.horizontalMenu {
+    list-style-type: none;
+}
+
+.horizontalMenu > li{
+    display: inline
+   }
+
+.horizontalMenu>li+li{
+    margin-left: 5px;
+}
+
+.horizontalMenu>li>a{
+    padding: 5px;
+    font-size: 15px;
+    font-weight: bold;
+    color: #333333;
+    text-decoration: none;
+}
+
+.horizontalMenu>li>a:hover{
+    color: orange;
+}
+
+.verticalMenu {
+    margin: 10px;
+    list-style-type: none;
+    float:left;
+    margin-left: 5px;
+}
+
+
+.verticalMenu>li+li{
+}
+
+.verticalMenu>li>a{
+    padding: 5px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #333333;
+    text-decoration: none;
+}
+
+.verticalMenu>li>a:hover{
+    color: orange;
+}
+
+.basicTreeMap {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin: auto;
+  float: left;
+  position: relative;
+  width: 960px;
+}
+.basicTreeMapNodes {
+  border: solid 1px white;
+  font: 10px sans-serif;
+  line-height: 12px;
+  overflow: hidden;
+  position: absolute;
+  text-indent: 2px;
+}
+
+.tilfordTreeNode circle {
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+.tilfordTreeNode {
+  font: 10px sans-serif;
+}
+
+.tilfordTreeLink {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 1.5px;
+}

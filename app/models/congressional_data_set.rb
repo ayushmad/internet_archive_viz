@@ -1,6 +1,6 @@
 require 'json'
 
-class CongressionalData
+class CongressionalDataSet
     YEARS = ['109', '110', '111', '112'];
     WORLD_MAP = "public/world_map.json"
     COUNTRY_2_ABBR = "public/cctld_list.dat"
@@ -10,6 +10,11 @@ class CongressionalData
     ###################Select Node wop Map Features#######################
     ######################################################################
     
+    def self.world_map_features
+        map_data_str = File.open(WORLD_MAP, "r").read;
+        JSON.parse map_data_str;
+    end
+
     def self.country_2_abbriviation(country)
         unless defined? @@abbr_map
             #Loading abbr file
@@ -28,11 +33,11 @@ class CongressionalData
     end
     
     def self.node_count_by_domain(year)
-        urls_per_country = CongressTldAggregate.where(:year => year);
+        urls_per_country = CongressTldAggregate.where(:year => year.to_s());
         aggregated_hash = {};
         urls_per_country.each do |country, value|
-            country_abbr = country_2_abbriviation country;
-            aggregated_hash[country_abbr] = value.to_i();
+            #country_abbr = country_2_abbriviation country;
+            aggregated_hash[country.node_tld] = country.count;
         end
         aggregated_hash;
     end
@@ -40,6 +45,7 @@ class CongressionalData
     def self.aggregated_domain_by_country_map(year)
         aggregated_hash = {};
         aggregated_hash["map"] = world_map_features;
+        puts "Coming to call of aggregated data";
         aggregated_hash["color_scheme"] = node_count_by_domain(year);
         aggregated_hash;
     end
@@ -77,9 +83,10 @@ class CongressionalData
         aggregated_list = [];
         for year in YEARS
             entry = {};
-            year_value = year + "th Congrees";
+            #year_value = year + "th Congrees";
+            year_value = year;
             entry["name"] = year_value; 
-            entry["children"] = get_node_by_degree_year(year, "in", 0, 50);
+            entry["children"] = get_node_by_degree_year(year, "in", 0, 10);
             aggregated_list.append(entry);
         end
         aggregated_hash = {};
@@ -108,16 +115,17 @@ class CongressionalData
     ################Accepted Json########################
     #####################################################
     
-    def self.get_json(model, data_format)
+    def self.get_json(model, data_format, sub_filters)
         if model == "model_listing"
             model_listing = {"node_in_degree" => { "endpoint" => "congressional_dataset",
-                                                "format_supported" => ["hierarchical"]},
+                                                   "format_supported" => ["hierarchical"],
+                                                   "display_name" => "Nodes In-degree"},
                              "node_out_degree" => { "endpoint" => "congressional_dataset",
-                                                "format_supported" => ["hierarchical"]},
-                             "109-aggregated_domain_by_country" => { "endpoint" => "congressional_dataset",
-                                                                 "format_supported" => ["map"]},
-                             "110-aggregated_domain_by_country" => { "endpoint" => "congressional_dataset",
-                                                                 "format_supported" => ["map"]}};
+                                                    "format_supported" => ["hierarchical"],
+                                                    "display_name" => "Nodes Out-Degree"},
+                             "aggregated_domain_by_country" => { "endpoint" => "congressional_dataset",
+                                                                 "format_supported" => ["map"],
+                                                                 "display_name" => "Domain Name Distribution"}}
             model_listing;
         elsif model == "node_in_degree"
             if data_format == "hierarchical"
@@ -133,12 +141,17 @@ class CongressionalData
             end
         elsif model == "aggregated_domain_by_country"
             if data_format == "map"
-                year = params(:year);
+                year = 109
+                if sub_filters.has_key?(:year)
+                    year = sub_filters[:year];
+                end
+                puts "Year is this"
+                puts year;
+                puts "Coming to call of aggregated data";
                 aggregated_domain_by_country_map(year);
             else
                 raise "Data format not supported by model: node_in_degree"
             end
-        #elsif model == "node_neighbours"
         else
             raise "Unknown model"
         end
