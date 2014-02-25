@@ -45,7 +45,6 @@ class CongressionalDataSet
     def self.aggregated_domain_by_country_map(year)
         aggregated_hash = {};
         aggregated_hash["map"] = world_map_features;
-        puts "Coming to call of aggregated data";
         aggregated_hash["color_scheme"] = node_count_by_domain(year);
         aggregated_hash;
     end
@@ -145,9 +144,6 @@ class CongressionalDataSet
                 if sub_filters.has_key?(:year)
                     year = sub_filters[:year];
                 end
-                puts "Year is this"
-                puts year;
-                puts "Coming to call of aggregated data";
                 aggregated_domain_by_country_map(year);
             else
                 raise "Data format not supported by model: node_in_degree"
