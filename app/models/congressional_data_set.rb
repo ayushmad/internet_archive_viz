@@ -54,9 +54,23 @@ class CongressionalDataSet
     ######################################################################
     def self.nodes_by_degree(year, degree_type, start, stop)
         if degree_type == "in"
-            CongressNode.where(:year => year).order(:node_indegree => :desc).offset(start).limit(stop - start);
+            if Rails.env != "production"
+                CongressNode.where(:year => year).order(:node_indegree => :desc).offset(start).limit(stop - start);
+            else
+                sql = 'SELECT  "congress_nodes".* FROM "congress_nodes"  WHERE "congress_nodes"."year" = '
+                sql += (year.to_s() + ' ORDER BY node_indegree DESC LIMIT ' + (stop - start).to_s());
+                sql += (' OFFSET ' + start.to_s());
+                ActiveRecord::Base.connection.execute(sql);
+            end
         elsif degree_type == "out"
-            CongressNode.where(:year => year).order(:node_outdegree => :desc).offset(start).limit(stop - start);
+            if Rails.env != "production"
+                CongressNode.where(:year => year).order(:node_outdegree => :desc).offset(start).limit(stop - start);
+            else
+                sql = 'SELECT  "congress_nodes".* FROM "congress_nodes"  WHERE "congress_nodes"."year" = '
+                sql += (year.to_s() + ' ORDER BY node_outdegree DESC LIMIT ' + (stop - start).to_s());
+                sql += (' OFFSET ' + start.to_s());
+                ActiveRecord::Base.connection.execute(sql);
+            end
         else
             raise "Not a valid degree type";
         end
