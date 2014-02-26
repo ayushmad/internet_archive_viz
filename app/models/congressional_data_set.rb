@@ -60,7 +60,8 @@ class CongressionalDataSet
                 sql = 'SELECT  "congress_nodes".* FROM "congress_nodes"  WHERE "congress_nodes"."year" = '
                 sql += (year.to_s() + ' ORDER BY node_indegree DESC LIMIT ' + (stop - start).to_s());
                 sql += (' OFFSET ' + start.to_s());
-                ActiveRecord::Base.connection.execute(sql);
+                result = ActiveRecord::Base.connection.execute(sql);
+		result;
             end
         elsif degree_type == "out"
             if Rails.env != "production"
@@ -69,7 +70,8 @@ class CongressionalDataSet
                 sql = 'SELECT  "congress_nodes".* FROM "congress_nodes"  WHERE "congress_nodes"."year" = '
                 sql += (year.to_s() + ' ORDER BY node_outdegree DESC LIMIT ' + (stop - start).to_s());
                 sql += (' OFFSET ' + start.to_s());
-                ActiveRecord::Base.connection.execute(sql);
+                result = ActiveRecord::Base.connection.execute(sql);
+		result;
             end
         else
             raise "Not a valid degree type";
@@ -81,12 +83,12 @@ class CongressionalDataSet
         aggregated_list = [];
         for node in nodes
             entry = {};
-            entry["name"] = node.node_url;
-            entry["link"] = node.node_url;
+            entry["name"] = node["node_url"];
+            entry["link"] = node["node_url"];
             if degree_type == "in"
-                entry["value"] = node.node_indegree;
+                entry["value"] = node["node_indegree"];
             else
-                entry["value"] = node.node_outdegree;
+                entry["value"] = node["node_outdegree"];
             end
             aggregated_list.append(entry);
         end
