@@ -15,7 +15,7 @@ $time_steps = ['109', '110'];
 
 DEVELOPMENT_TABLE_COUNT = 1000;
 YEAR_MARKER = '[YEAR_MARKER]';
-BASE_DATA = '/home/ayushmad/workspace/ia_project/data_processing/hpcc/output_files/';
+BASE_DATA = '/home/ayushmad/Data_processing/ia-data-processing/hpcc/output_files/';
 DELIMITER = ";";
 $tld_table = {};
 
@@ -42,7 +42,7 @@ def populate_node_table(time_step)
         while line = nfh.gets();
               entry = line.split(DELIMITER);
               entry_hash = {:node_url => entry[0],
-                            :year => timestep,
+                            :year => time_step,
                             :node_indegree => entry[1],
                             :node_outdegree => entry[2],
                             :node_tld => entry[5],
