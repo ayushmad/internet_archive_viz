@@ -90,7 +90,7 @@ function get_data_models_from_server(endpoint, callback, scope) {
 	xmlhttp.send();
 }
 
-endpoint = 'http://localhost:3000/congressional_dataset';
+endpoint = 'http://ascjanng.asc.usc.edu/congressional_dataset';
 model_data_endpoint = endpoint + "?model=model_listing&data_format=123";
 get_data_models_from_server(model_data_endpoint, init_mantis);
 
