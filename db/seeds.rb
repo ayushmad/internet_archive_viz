@@ -11,13 +11,13 @@ $file_map_base = { :node_file => 'node_file_[YEAR_MARKER].nodes',
                    :edge_file => 'node_file_[YEAR_MARKER].edges'}
 
 #$time_steps = ['109', '110', '111', '112'];
-$time_steps = ['109', '110'];
+$time_steps = ['111', '112'];
 
 DEVELOPMENT_TABLE_COUNT = 1000;
 YEAR_MARKER = '[YEAR_MARKER]';
 BASE_DATA = '/home/ayushmad/Data_processing/ia-data-processing/hpcc/output_files/';
-BASE_DATA_DEVELOPMENT = '/home/ayushmad/workspace/ia_project/internet_archive_data_processing/output_files';
-DELIMITER = ";";
+BASE_DATA_DEVELOPMENT = '/home/ayushmad/workspace/ia_project/internet_archive_data_processing/output_files/';
+DELIMITER = "##-##";
 $tld_table = {};
 
 def get_file_name(base_name, year)

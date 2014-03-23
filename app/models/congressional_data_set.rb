@@ -140,7 +140,13 @@ class CongressionalDataSet
                                                     "display_name" => "Nodes Out-Degree"},
                              "aggregated_domain_by_country" => { "endpoint" => "congressional_dataset",
                                                                  "format_supported" => ["map"],
-                                                                 "display_name" => "Domain Name Distribution"}}
+                                                                 "display_name" => "Domain Name Distribution",
+                                                                 "sub_filter" => [ { "sub_menutype" => "dropdown",
+                                                                                     "sub_menu_name" => "year",
+                                                                                     "sub_menu_options" => [{"name" => "109"}, {"name" => "110"}, {"name" => "111"}, {"name" => "112"}]
+                                                                                    }]
+                                                                }
+                            }
             model_listing;
         elsif model == "node_in_degree"
             if data_format == "hierarchical"

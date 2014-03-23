@@ -173,3 +173,55 @@
   stroke: #ccc;
   stroke-width: 1.5px;
 }
+
+.dataModelVerticalMenu {
+    margin: 10px;
+    list-style-type: none;
+    float:left;
+    margin-left: 5px;
+}
+
+
+.dataModelVerticalMenu>li+li{
+}
+
+.dataModelVerticalMenu>li>a{
+    padding: 5px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #333333;
+    text-decoration: none;
+}
+
+.dataModelVerticalMenu>li>a:hover{
+    color: orange;
+}
+
+.dataModelVerticalMenu .subMenu{
+    background: #C0C0C0;
+    -moz-border-radius:10px;  /* for Firefox */
+    -webkit-border-radius:10px; /* for Webkit-Browsers */
+    border-radius:10px; /* regular */
+}	
+
+.dataModelVerticalMenu .subMenu:hover{
+    background: #E0E0E0;
+}	
+
+.dataModelVerticalMenu .subMenu>ul{
+    margin-top: 10px;
+    list-style-type: none;
+}
+.dataModelVerticalMenu .subMenu>ul>li{
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+.dataModelVerticalMenu .subMenu>ul>li .subMenuInput{
+    float: right;
+    width: 100px;
+}
+.dataModelVerticalMenu .subMenu>ul>li button{
+  float: right;
+  width: 100px;
+}

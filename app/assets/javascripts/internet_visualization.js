@@ -21,6 +21,8 @@ function init_views () {
     mantis.register_new_view(my_basic_treemap);
     var my_tf_Tree = TilfordTree();
     mantis.register_new_view(my_tf_Tree);
+    var my_dmvm = DataModelVerticalMenu();
+    mantis.register_new_view(my_dmvm);
 };
 
 function init_models () {
@@ -46,7 +48,7 @@ function init_mantis_controller() {
 	//mantis.controller.register_to_system("test", "#VizContainer", 'BasicTreeMap', 'node_in_degree');
 	//mantis.controller.register_to_system("test", "#VizContainer", 'TilfordTree', 'node_in_degree');
 	mantis.controller.register_to_system("test", "#VizMenu", 'HorizontalMenu', 'Visulizations');
-	mantis.controller.register_to_system("test", "#DataMenu", 'VerticalMenu', 'Models');
+	mantis.controller.register_to_system("test", "#DataMenu", 'DataModelVerticalMenu', 'Models');
 
 	mantis.controller.init();
 };
@@ -66,6 +68,7 @@ function populate_model_list_from_server  (data) {
 	    temp_model.endpoint = data[source_name].endpoint;
 	    temp_model.format_supported = data[source_name].format_supported;
 	    temp_model.display_name = data[source_name].display_name;
+	    temp_model.sub_filter = data[source_name].sub_filter;
 	    mantis.register_new_model(temp_model);
 	}
   }
@@ -90,7 +93,7 @@ function get_data_models_from_server(endpoint, callback, scope) {
 	xmlhttp.send();
 }
 
-endpoint = 'http://ascjanng.asc.usc.edu/congressional_dataset';
+endpoint = '/congressional_dataset';
 model_data_endpoint = endpoint + "?model=model_listing&data_format=123";
 get_data_models_from_server(model_data_endpoint, init_mantis);
 
