@@ -202,6 +202,7 @@
     -moz-border-radius:10px;  /* for Firefox */
     -webkit-border-radius:10px; /* for Webkit-Browsers */
     border-radius:10px; /* regular */
+    padding: 5px 5px 5px 5px;
 }	
 
 .dataModelVerticalMenu .subMenu:hover{
@@ -209,17 +210,24 @@
 }	
 
 .dataModelVerticalMenu .subMenu>ul{
-    margin-top: 10px;
     list-style-type: none;
+    padding:0;
 }
 .dataModelVerticalMenu .subMenu>ul>li{
-    margin-top: 10px;
     overflow: hidden;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.dataModelVerticalMenu .subMenu>ul>li+li{
+    margin-top: 10px;
 }
 
 .dataModelVerticalMenu .subMenu>ul>li .subMenuInput{
     float: right;
     width: 100px;
+}
+.dataModelVerticalMenu .subMenu>ul>li span {
+    float: left;
 }
 .dataModelVerticalMenu .subMenu>ul>li button{
   float: right;
