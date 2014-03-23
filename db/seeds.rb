@@ -16,11 +16,16 @@ $time_steps = ['109', '110'];
 DEVELOPMENT_TABLE_COUNT = 1000;
 YEAR_MARKER = '[YEAR_MARKER]';
 BASE_DATA = '/home/ayushmad/Data_processing/ia-data-processing/hpcc/output_files/';
+BASE_DATA_DEVELOPMENT = '/home/ayushmad/workspace/ia_project/internet_archive_data_processing/output_files';
 DELIMITER = ";";
 $tld_table = {};
 
 def get_file_name(base_name, year)
-    return BASE_DATA + base_name.sub(YEAR_MARKER, year.to_s());
+    if Rails.env == 'production'
+       BASE_DATA + base_name.sub(YEAR_MARKER, year.to_s());
+    else
+       BASE_DATA_DEVELOPMENT + base_name.sub(YEAR_MARKER, year.to_s());
+    end
 end
 
 def add_to_tld_table(year, node_tld)
