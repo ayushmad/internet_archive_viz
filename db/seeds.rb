@@ -81,25 +81,65 @@ def populate_edge_table(time_step)
     efh = File.new(efn, 'r');
     if Rails.env == 'production'
         while (line = efh.gets())
-        	entry = line.split(DELIMITER);
-        	src_id = CongressNode.where(:node_url => entry[0]);
-        	dest_id = CongressNode.where(:node_url => entry[1]);
+          entry = line.chomp.split(DELIMITER);
+          if entry.length < 2
+              next;
+          end
+          if entry[0].blank? or entry[1].blank?
+                next;
+          end
+        	src_id_res = CongressNode.where(:node_url => entry[0], :year => time_step);
+          src_id = src_id_res[0]['id'];
+        	dest_id_res = CongressNode.where(:node_url => entry[1], :year => time_step);
+          dest_id = dest_id_res[0]['id'];
         	entry_hash = { :src_id => src_id,
                 	       :dest_id => dest_id,
                        	 :weight => entry[2]};
         	CongressEdge.create(entry_hash);
-	end 
+        end 
     else
         counter = DEVELOPMENT_TABLE_COUNT;
         while counter > 0
             line = efh.gets();
-            entry = line.split(DELIMITER);
-            src_id = CongressNode.where(:node_url => entry[0]);
-            dest_id = CongressNode.where(:node_url => entry[1]);
+            entry = line.chomp.split(DELIMITER);
+            if entry.length < 2
+              next;
+            end
+            if entry[0].blank? or entry[1].blank?
+                next;
+            end
+            src_id_res = CongressNode.where(:node_url => entry[0], :year => time_step);
+            src_id = 0;
+            if src_id_res.blank?
+                entry_hash = {:node_url => entry[0],
+                              :year => time_step,
+                              :node_indegree => 100,
+                              :node_outdegree => 120,
+                              :node_tld => 'us',
+                              :node_ip_map => '0.0.0.0'};
+                src_id = CongressNode.create(entry_hash)['id'];
+            else
+              src_id = src_id_res[0]['id'];
+            end
+            dest_id_res = CongressNode.where(:node_url => entry[1], :year => time_step);
+            dest_id = 0;
+            if dest_id_res.blank?
+                entry_hash = {:node_url => entry[1],
+                              :year => time_step,
+                              :node_indegree => 100,
+                              :node_outdegree => 100,
+                              :node_tld => 'us',
+                              :node_ip_map => '0.0.0.0'};
+                temp = CongressNode.create(entry_hash);
+                dest_id = temp['id'];
+            else
+              dest_id = dest_id_res[0]['id'];
+            end
             entry_hash = { :src_id => src_id,
                            :dest_id => dest_id,
                            :weight => entry[2]};
             CongressEdge.create(entry_hash);
+            puts "Adding edges";
             counter -= 1;
         end
     end

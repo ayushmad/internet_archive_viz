@@ -125,6 +125,117 @@ class CongressionalDataSet
         aggregated_hash;
     end
 
+    ####################################################
+    ########## Multi View Graph ########################
+    ####################################################
+    def self.get_neighbours(node_id)
+        result = CongressEdge.where(:src_id => node_id);
+        puts "Coming here above query";
+        puts result.inspect;
+        src_list = [];
+        result.each { |entry|
+           puts "COming inside for eeach entry";
+           puts entry.inspect;
+           to_node = entry['dest_id'];
+           weight = entry['weight'];
+           temp = CongressNode.find(to_node);
+           puts temp.inspect;
+           node_url = CongressNode.find(to_node)['node_url'];
+           src_list.append([node_url, weight]);
+        }
+        result = CongressEdge.where(:dest_id => node_id);
+        puts result.inspect;
+        dest_list = [];
+        result.each { |entry|
+           puts "COming inside for eeach entry";
+           puts entry.inspect;
+           from_node = entry['src_id'];
+           weight = entry['weight'];
+           temp = CongressNode.find(from_node);
+           puts temp.inspect;
+           node_url = CongressNode.find(from_node)['node_url'];
+           dest_list.append([node_url, weight]);
+        }
+        puts "Just above print";
+        puts src_list;
+        puts dest_list;
+        {"src" => src_list, "dest" => dest_list}; 
+    end
+
+    def self.merge_create_multi_view_graph(base_node, edge_named_map)
+        puts "This is merge table";
+        puts base_node;
+        puts edge_named_map.inspect;
+        node_map = {};
+        node_map[base_node] = 1;
+        node_count = 2;
+        edge_map = [];
+        for year in YEARS
+            if not edge_named_map.has_key?(year)
+                next;
+            end
+            year_edge_named_map = edge_named_map[year];
+            puts "THIS IS MANY SRUFF";
+            puts year_edge_named_map.inspect;
+            edge_table = [];
+            year_edge_named_map["src"].each { |entry|
+                if not node_map.has_key?(entry[0])
+                    node_map[entry[0]] = node_count;
+                    other_node = node_count;
+                    node_count += 1;
+                else
+                    other_node = node_map[entry[0]];
+                end
+                edge_table.append({'src' => 1,
+                                   'dest' => other_node,
+                                   'weight' => entry[1]});
+            }
+            year_edge_named_map["dest"].each { |entry|
+                if not node_map.has_key?(entry[0])
+                    node_map[entry[0]] = node_count;
+                    other_node = node_count;
+                    node_count += 1;
+                else
+                    other_node = node_map[entry[0]];
+                end
+                edge_table.append({'src' => other_node,
+                                   'dest' => 1,
+                                   'weight' => entry[1]});
+            }
+            edge_map.append({"property" => year, 
+                             "edges" => edge_table});
+        end
+        nodes = [];
+        node_map.each do |node_name, id|
+            nodes.append({"name" => node_name,
+                          "id" => id});
+        end
+        {"nodes" => nodes,
+         "graphs" => edge_map};
+    end
+
+    def self.multi_view_graph(search_node)
+        node_map = {};
+        for year in YEARS
+            result = CongressNode.where(:year => year, :node_url => search_node);
+            node_count = 0;
+            for entry in result
+                if node_count > 0
+                    raise "Exception multiple nodes with same name"
+                end
+                node_map[year] = entry['id'];
+            end
+        end
+        puts node_map;
+        edge_map = {};
+        for year in YEARS
+            if node_map.has_key?(year)
+                edge_map[year] = get_neighbours(node_map[year]);
+            end
+        end
+        merge_create_multi_view_graph(search_node, edge_map);
+    end
+
     
     #####################################################
     ################Accepted Json########################
@@ -143,9 +254,18 @@ class CongressionalDataSet
                                                                  "display_name" => "Domain Name Distribution",
                                                                  "sub_filter" => [ { "sub_menutype" => "dropdown",
                                                                                      "sub_menu_name" => "year",
+                                                                                     "sub_menu_display_name" => "Select Year",
                                                                                      "sub_menu_options" => [{"name" => "109"}, {"name" => "110"}, {"name" => "111"}, {"name" => "112"}]
                                                                                     }]
-                                                                }
+                                                                },
+                              "multi_view_graph" => { "endpoint" => "congressional_dataset",
+                                                     "format_supported" => ["graph_list"],
+                                                     "display_name" => "Node Neighbours Over Time",
+                                                     "sub_filter" => [{ "sub_menutype" => "search_bar",
+                                                                        "sub_menu_name" => "node_name",
+                                                                        "sub_menu_display_name" => "Root Node"
+                                                                }]
+                                                    }
                             }
             model_listing;
         elsif model == "node_in_degree"
@@ -167,6 +287,13 @@ class CongressionalDataSet
                     year = sub_filters[:year];
                 end
                 aggregated_domain_by_country_map(year);
+            else
+                raise "Data format not supported by model: node_in_degree"
+            end
+        elsif model == "multi_view_graph"
+            if data_format == "graph_list"
+                search_node = sub_filters[:node_name];
+                multi_view_graph(search_node);
             else
                 raise "Data format not supported by model: node_in_degree"
             end

@@ -56,7 +56,11 @@ function DataModelVerticalMenu() {
 				 				} else {
 								    	return false;
 								}
-			     				  }).html(function(d) { return "<span>" + d.sub_menu_name + "</span>";})
+			     				  }).html(function(d) { if (d.sub_menu_display_name != undefined) {
+							      				return "<span>" + d.sub_menu_display_name + "</span>"; } 
+			     							else { 
+										   	return "<span>" + d.sub_menu_name + "</span>" ;
+										}})
 			     				    .append('select')
 							    .attr('class', 'subMenuInput subMenuSelect')
 							    .attr('key-name', function(d){ return d.sub_menu_name})
@@ -66,6 +70,22 @@ function DataModelVerticalMenu() {
 							    .append('option')
 							    .attr('value', function (d) {  return d.name})
 							    .text(function(d) { if (d.display_name != undefined){return d.display_name} else { return d.name;}});
+		             // Adding Drop Down
+		             sub_menu_elements.filter(function (d) {
+				 				if (d.sub_menutype == "search_bar") {
+				 					return true;
+				 				} else {
+								    	return false;
+								}
+			     				  }).html(function(d) { if (d.sub_menu_display_name != undefined) {
+							      				return "<span>" + d.sub_menu_display_name + "</span>"; } 
+			     							else { 
+										   	return "<span>" + d.sub_menu_name + "</span>" ;
+										}})
+							    .append('input')
+							    .attr('class', 'subMenuInput subMenuTextField')
+							    .attr('key-name', function(d){ return d.sub_menu_name})
+							    .attr('type', 'text');
 			   // Adding Apply button
 			   sub_menu_div.append('li')
 			       	       .append('button')
@@ -74,7 +94,7 @@ function DataModelVerticalMenu() {
 						// Extracting
 						var sub_filter_options = {};
 						// Extracting select options
-						$('.subMenuSelect').each( function (index, element) {
+						$('.subMenuInput').each( function (index, element) {
 						    			selected_element = $(this);
 						    			sub_filter_options[selected_element.attr('key-name')] = selected_element.val();
 						    			});
@@ -99,9 +119,6 @@ function DataModelVerticalMenu() {
 		      	  return d.display_name;
 		      }
 		  });
-    }
-    DataModelVerticalMenu.sub_menu = function(parent_menu_obj, parent_menu_d3_obj, sub_menu_hash, child_class) {
-
     }
     DataModelVerticalMenu.message_handler[mantis.MessageType.SOURCE_UPDATE] = function (data) {
 	this.create_menu(data);
