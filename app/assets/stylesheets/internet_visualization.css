@@ -235,20 +235,32 @@
 }
 
 
-.ForceAtlaslink {
+.TemporalGraphslink {
   fill: none;
   stroke: #666;
   stroke-width: 1.5px;
 }
 
-.ForceAtlasnode circle {
+.TemporalGraphsnode circle {
   fill: #ccc;
   stroke: #fff;
   stroke-width: 1.5px;
 }
 
-.ForceAtlasbanner {
+.TemporalGraphsbanner {
    fill: #999999; 
    stroke: #FBB117;
    font-size: 30px;
+}
+
+.TemporalGraphsMergedlink {
+  fill: none;
+  stroke: #666;
+  stroke-width: 1.5px;
+}
+
+.TemporalGraphsMergednode circle {
+  fill: #ccc;
+  stroke: #fff;
+  stroke-width: 1.5px;
 }

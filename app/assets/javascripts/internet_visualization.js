@@ -23,8 +23,10 @@ function init_views () {
     mantis.register_new_view(my_tf_Tree);
     var my_dmvm = DataModelVerticalMenu();
     mantis.register_new_view(my_dmvm);
-    var my_fa = ForcedAtlas();
-    mantis.register_new_view(my_fa);
+    var my_tg = TemporalGraphs();
+    mantis.register_new_view(my_tg);
+    var my_tgm = TemporalGraphsMerged();
+    mantis.register_new_view(my_tgm);
 };
 
 function init_models () {

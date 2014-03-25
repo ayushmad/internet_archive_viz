@@ -1,7 +1,7 @@
-function ForcedAtlas() {
-    var ForcedAtlas = new mantis.ViewBase("ForcedAtlas", "graph_list");
+function TemporalGraphs() {
+    var TemporalGraphs = new mantis.ViewBase("ForcedAtlas", "graph_list");
     
-    ForcedAtlas.create_layout = function () {
+    TemporalGraphs.create_layout = function () {
 	
 	var width = d3.select(this.container).style('width').replace('px', '');
 	var height = d3.select(this.container).style('height').replace('px', '');
@@ -58,7 +58,7 @@ function ForcedAtlas() {
 	}
     };
 
-    ForcedAtlas.layout_a_sub_graph = function(canvas_dimensions, nodes, links, banner) {
+    TemporalGraphs.layout_a_sub_graph = function(canvas_dimensions, nodes, links, banner) {
 	var width = this.width;
 	var height = this.height;
 	var canvas = this.canvas;
@@ -75,7 +75,7 @@ function ForcedAtlas() {
 			     .start();
 
 	canvas_group.append("text")
-	    	    .attr('class', 'ForceAtlasbanner')
+	    	    .attr('class', 'TemporalGraphsbanner')
 	            .attr('x', canvas_dimensions.width/2)
 		    .attr('y', 30)
 		    .text(banner);
@@ -84,12 +84,12 @@ function ForcedAtlas() {
 	var link = canvas_group.selectAll(".link")
 	    .data(force_layout.links())
 	    .enter().append("line")
-	    .attr("class", "ForceAtlaslink");
+	    .attr("class", "TemporalGraphslink");
 
 	var node = canvas_group.selectAll(".node")
 	    .data(force_layout.nodes())
 	    .enter().append("g")
-	    .attr("class", function (d) { return "ForceAtlasnode"})
+	    .attr("class", function (d) { return "TemporalGraphsnode"})
 	    .attr("node_id", function(d) { return d.id;})
 	    .on("mouseover", mouseover)
 	    .on("mouseout", mouseout)
@@ -140,7 +140,7 @@ function ForcedAtlas() {
 	};
     };
     
-    ForcedAtlas.render_layout = function (data) {
+    TemporalGraphs.render_layout = function (data) {
 	var nodes = data.nodes;
 	var width = this.width;
 	var height = this.height;
@@ -189,16 +189,16 @@ function ForcedAtlas() {
 	}
     };
     
-    ForcedAtlas.message_handler[mantis.MessageType.SOURCE_UPDATE] = function (data) {
+    TemporalGraphs.message_handler[mantis.MessageType.SOURCE_UPDATE] = function (data) {
 	// Clean Container before drawing
 	d3.select(this.container).html('');
 	this.create_layout();
 	this.render_layout(data);
     };
 
-    ForcedAtlas.message_handler[mantis.MessageType.VIEW_INIT] = function (data) {
+    TemporalGraphs.message_handler[mantis.MessageType.VIEW_INIT] = function (data) {
         this.message_handler[mantis.MessageType.SOURCE_UPDATE].call(this, data);
     };
     
-    return ForcedAtlas;
+    return TemporalGraphs;
 }
