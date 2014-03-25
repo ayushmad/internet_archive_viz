@@ -70,7 +70,7 @@ function TemporalGraphsMerged() {
 	links_list = [];
 	nodes = [];
 	group_count  = data.graphs.length;
-	base_node =  $.extend({dimension: group_count}, id_node_map[1]);
+	base_node =  $.extend({dimension: group_count, node_type: 'fixed', x: width/2, y: height/2}, id_node_map[1]);
 	legend_map = [{'name': base_node.name, 'dimension': base_node.dimension}];
 	for (var index = 0; index < group_count; index ++) {
 	    nodes_sub_group = {1:base_node};
@@ -103,7 +103,8 @@ function TemporalGraphsMerged() {
 			     .links(links_list)
 			     .size([width, height])
 			     .linkDistance(60)
-			     .charge(-300)
+			     .charge(-40)
+			     .gravity(0)
 			     .on("tick", tick)
 			     .start();
 
@@ -131,6 +132,7 @@ function TemporalGraphsMerged() {
 	node.append("text")
 	    .attr("x", 12)
 	    .attr("dy", ".35em")
+	    .style("display", "none")
 	    .text(function(d) { return d.name; });
 	
 	function tick(e) {
@@ -143,12 +145,14 @@ function TemporalGraphsMerged() {
   // Push different nodes in different directions for clustering.
   		var k = 6 * e.alpha;
   		nodes.forEach(function(o) {
-    			o.y += (o.dimension/(group_count/2)) & 1 ? k : -k;
-    			o.x += (o.dimension%(group_count/2)) & 2 ? k : -k;
+		    	if (o.node_type == 'fixed') {
+			    return;
+			}
+    			o.y += (o.dimension) & 1 ? k : -k;
+    			o.x += (o.dimension) & 2 ? k : -k;
   		});
 
 	      node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
-
 	}
 
 	function mouseover() {
@@ -159,6 +163,8 @@ function TemporalGraphsMerged() {
 		          	.duration(750)
 			  	.attr("r", 20);
 		  
+			selector.select("text")
+		          	.style("display", "block");
 	      }
 	      d3.selectAll($('[node_id=' + node_id + ']')).call(node_activate);
 	};
@@ -170,6 +176,9 @@ function TemporalGraphsMerged() {
 			selector.select("circle").transition()
 		          	.duration(750)
 			  	.attr("r", 8);
+			
+			selector.select("text")
+		          	.style("display", "none");
 		  
 	      }
 	      d3.selectAll($('[node_id=' + node_id + ']')).call(node_deactivate);

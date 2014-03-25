@@ -101,6 +101,7 @@ function TemporalGraphs() {
 	node.append("text")
 	    .attr("x", 12)
 	    .attr("dy", ".35em")
+	    .style("display", "none")
 	    .text(function(d) { return d.name; });
 	
 	function tick() {
@@ -122,7 +123,9 @@ function TemporalGraphs() {
 			selector.select("circle").transition()
 		          	.duration(750)
 			  	.attr("r", 20);
-		  
+			selector.select("text")
+			        .style("display", "block");
+
 	      }
 	      d3.selectAll($('[node_id=' + node_id + ']')).call(node_activate);
 	};
@@ -134,7 +137,8 @@ function TemporalGraphs() {
 			selector.select("circle").transition()
 		          	.duration(750)
 			  	.attr("r", 8);
-		  
+			selector.select("text")
+			        .style("display", "none");
 	      }
 	      d3.selectAll($('[node_id=' + node_id + ']')).call(node_deactivate);
 	};
