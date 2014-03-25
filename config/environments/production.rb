@@ -46,7 +46,7 @@ InternetArchiveVisualization::Application.configure do
   # config.action_controller.asset_host = "http://assets.example.com"
 
   # Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)
-   config.assets.precompile += %w( internet_visualization.css viz_page.css d3.v3.min.js internet_visualization.js  horizontal_menu.js mantis.js mapshader.js tilfordtree.js treemap.js vertical_menu.js )
+   config.assets.precompile += %w( internet_visualization.css viz_page.css d3.v3.min.js internet_visualization.js  horizontal_menu.js mantis.js mapshader.js tilfordtree.js treemap.js vertical_menu.js temporal_graphs.js temporal_graphs_merged.js)
 
   # Disable delivery errors, bad email addresses will be ignored
   # config.action_mailer.raise_delivery_errors = false
