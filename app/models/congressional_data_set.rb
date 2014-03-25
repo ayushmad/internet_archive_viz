@@ -130,42 +130,25 @@ class CongressionalDataSet
     ####################################################
     def self.get_neighbours(node_id)
         result = CongressEdge.where(:src_id => node_id);
-        puts "Coming here above query";
-        puts result.inspect;
         src_list = [];
         result.each { |entry|
-           puts "COming inside for eeach entry";
-           puts entry.inspect;
            to_node = entry['dest_id'];
            weight = entry['weight'];
-           temp = CongressNode.find(to_node);
-           puts temp.inspect;
            node_url = CongressNode.find(to_node)['node_url'];
            src_list.append([node_url, weight]);
         }
         result = CongressEdge.where(:dest_id => node_id);
-        puts result.inspect;
         dest_list = [];
         result.each { |entry|
-           puts "COming inside for eeach entry";
-           puts entry.inspect;
            from_node = entry['src_id'];
            weight = entry['weight'];
-           temp = CongressNode.find(from_node);
-           puts temp.inspect;
            node_url = CongressNode.find(from_node)['node_url'];
            dest_list.append([node_url, weight]);
         }
-        puts "Just above print";
-        puts src_list;
-        puts dest_list;
         {"src" => src_list, "dest" => dest_list}; 
     end
 
     def self.merge_create_multi_view_graph(base_node, edge_named_map)
-        puts "This is merge table";
-        puts base_node;
-        puts edge_named_map.inspect;
         node_map = {};
         node_map[base_node] = 1;
         node_count = 2;
@@ -175,8 +158,6 @@ class CongressionalDataSet
                 next;
             end
             year_edge_named_map = edge_named_map[year];
-            puts "THIS IS MANY SRUFF";
-            puts year_edge_named_map.inspect;
             edge_table = [];
             year_edge_named_map["src"].each { |entry|
                 if not node_map.has_key?(entry[0])
@@ -226,7 +207,6 @@ class CongressionalDataSet
                 node_map[year] = entry['id'];
             end
         end
-        puts node_map;
         edge_map = {};
         for year in YEARS
             if node_map.has_key?(year)
@@ -291,7 +271,7 @@ class CongressionalDataSet
                 raise "Data format not supported by model: node_in_degree"
             end
         elsif model == "multi_view_graph"
-            if data_format == "graph_list"
+            if data_format == "graph_list" and sub_filters.has_key?(:node_name)
                 search_node = sub_filters[:node_name];
                 multi_view_graph(search_node);
             else

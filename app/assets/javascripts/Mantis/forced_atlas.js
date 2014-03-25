@@ -9,56 +9,194 @@ function ForcedAtlas() {
 	var canvas = d3.select(this.container)
 	    		.append('svg')
 			.attr("width", width)
-			.attr("height", height)
-			.append("g")
-			.attr("transform", "translate("+diameter/2 + "," + diameter/2 + ")");
+			.attr("height", height);
 
-	this.diameter = diameter;
-	this.tree  = tree;
-	this.diagonal = diagonal;
+	this.width = width;
+	this.height = height;
 	this.canvas = canvas;
+
+    };
+
+    function split_screen(width, height, group_count) {
+	if (group_count < 1) {
+	    alert('some error has ocurred in code');
+	} else if (group_count > 4) {
+	    console.log('This case is yet to be handled');
+	} else if (group_count > 2) {
+	    return [ { 'width': width/2,
+		       'height': height/2,
+		       'start_x': 0,
+		       'start_y': 0},
+	    	     { 'width': width/2,
+		       'height': height/2,
+		       'start_x': width/2,
+		       'start_y': 0},
+	    	     { 'width': width/2,
+		       'height': height/2,
+		       'start_x': 0,
+		       'start_y': height/2},
+	    	     { 'width': width/2,
+		       'height': height/2,
+		       'start_x': width/2,
+		       'start_y': height/2}
+		     ];
+	} else if (group_count == 2) {
+	    return [ { 'width': width/2,
+		       'height': height,
+		       'start_x': 0,
+		       'start_y': 0},
+	    	     { 'width': width/2,
+		       'height': height,
+		       'start_x': width/2,
+		       'start_y': 0}]
+	    
+	} else {
+	    return [ { 'width': width/2,
+		       'height': height,
+		       'start_x': 0,
+		       'start_y': 0}]
+	}
+    };
+
+    ForcedAtlas.layout_a_sub_graph = function(canvas_dimensions, nodes, links, banner) {
+	var width = this.width;
+	var height = this.height;
+	var canvas = this.canvas;
+	var canvas_group = canvas.append('g')
+	    			 .attr("transform", "translate(" + canvas_dimensions.start_x + ", " + canvas_dimensions.start_y + ")");
+	
+	var force_layout = d3.layout.force()
+	    		     .nodes(nodes)
+			     .links(links_list)
+			     .size([canvas_dimensions.width, canvas_dimensions.height])
+			     .linkDistance(60)
+			     .charge(-300)
+			     .on("tick", tick)
+			     .start();
+
+	canvas_group.append("text")
+	    	    .attr('class', 'ForceAtlasbanner')
+	            .attr('x', canvas_dimensions.width/2)
+		    .attr('y', 30)
+		    .text(banner);
+	                
+	
+	var link = canvas_group.selectAll(".link")
+	    .data(force_layout.links())
+	    .enter().append("line")
+	    .attr("class", "ForceAtlaslink");
+
+	var node = canvas_group.selectAll(".node")
+	    .data(force_layout.nodes())
+	    .enter().append("g")
+	    .attr("class", function (d) { return "ForceAtlasnode"})
+	    .attr("node_id", function(d) { return d.id;})
+	    .on("mouseover", mouseover)
+	    .on("mouseout", mouseout)
+	    .call(force_layout.drag);
+
+	node.append("circle")
+	    .attr("r", 8);
+
+	node.append("text")
+	    .attr("x", 12)
+	    .attr("dy", ".35em")
+	    .text(function(d) { return d.name; });
+	
+	function tick() {
+	  link
+	      .attr("x1", function(d) { return d.source.x; })
+	      .attr("y1", function(d) { return d.source.y; })
+	      .attr("x2", function(d) { return d.target.x; })
+	      
+	      .attr("y2", function(d) { return d.target.y; });
+
+	  node
+	      .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+	}
+
+	function mouseover() {
+	      var node_id = d3.select(this)
+		  	      .attr('node_id');
+	      function node_activate(selector) {
+			selector.select("circle").transition()
+		          	.duration(750)
+			  	.attr("r", 20);
+		  
+	      }
+	      d3.selectAll($('[node_id=' + node_id + ']')).call(node_activate);
+	};
+
+	function mouseout() {
+	      var node_id = d3.select(this)
+		  	      .attr('node_id');
+	      function node_deactivate(selector) {
+			selector.select("circle").transition()
+		          	.duration(750)
+			  	.attr("r", 8);
+		  
+	      }
+	      d3.selectAll($('[node_id=' + node_id + ']')).call(node_deactivate);
+	};
     };
     
     ForcedAtlas.render_layout = function (data) {
-	var diameter = this.diameter;
-	var diagonal = this.diagonal;
+	var nodes = data.nodes;
+	var width = this.width;
+	var height = this.height;
 	var canvas = this.canvas;
-	var tree = this.tree;
-	var radius = 4.5;
+
+	/*
+	 * Currently we are laying out the graphs as though they are a single forest later we will
+	 * split them into different layouts
+	 * and attach colour based on id
+	 */
+	 
+	// Parse Nodes and create graphs
+	id_node_map = {};
+	data.nodes.forEach(function(entry) {
+	    id_node_map[entry["id"]] = entry;
+	});
 	
-	var nodes = tree.nodes(data);
-	var links = tree.links(nodes);
-
-	var link = canvas.selectAll(".tilfordTreeLink")
-	    		 .data(links)
-			 .enter().append("path")
-			 .attr('class', "tilfordTreeLink")
-			 .attr("d", diagonal);
-
-	var node = canvas.selectAll(".tilfordTreeNode")
-	    		 .data(nodes)
-			 .enter().append("g")
-			 .attr("class", "tilfordTreeNode")
-			 .attr("transform", function(d) { return "rotate(" + (d.x - 90) +")translate(" + d.y + ")";});
-
-	node.append("circle")
-	    .attr("r", function() { return radius;});
-
-	node.append("text")
-	    .attr("dy", ".31em")
-	    .attr("text-anchor", function(d) { return d.x < 180 ? "start": "end";})
-	    .attr("transform", function(d) { return d.x < 180 ? "translate(8)": "rotate(180)translate(-8)";})
-	    .text(function(d) {  return d.name;});
+	//
+	group_count  = data.graphs.length;
+	canvas_dimensions_group = split_screen(width, height, group_count);
+	for (var index = 0; index < group_count; index ++) {
+	    nodes_sub_group = {};
+	    links_list = [];
+	    nodes = [];
+	    sub_graph_set = data.graphs[index];
+	    sub_graph_set.edges.forEach(function (edge) {
+		src_node = undefined;
+		dest_node = undefined;
+		if (!nodes_sub_group.hasOwnProperty(edge.src)) {
+		   nodes_sub_group[edge.src] = $.extend({}, id_node_map[edge.src]);
+		}
+		if (!nodes_sub_group.hasOwnProperty(edge.dest)) {
+		   nodes_sub_group[edge.dest] = $.extend({}, id_node_map[edge.dest]);
+		}
+		src_node =  nodes_sub_group[edge.src];
+		dest_node = nodes_sub_group[edge.dest];
+		links_list.push({source: src_node,
+		    	           target: dest_node,
+		    		   weight: edge.weight});
+			    	   
+	    });
+	    for (var key in nodes_sub_group) {
+		nodes.push(nodes_sub_group[key]);
+	    }
+	    this.layout_a_sub_graph(canvas_dimensions_group[index], nodes, links_list, sub_graph_set.property);
+	}
     };
     
     ForcedAtlas.message_handler[mantis.MessageType.SOURCE_UPDATE] = function (data) {
+	// Clean Container before drawing
 	d3.select(this.container).html('');
 	this.create_layout();
 	this.render_layout(data);
     };
 
     ForcedAtlas.message_handler[mantis.MessageType.VIEW_INIT] = function (data) {
-	// Clean Container before drawing
         this.message_handler[mantis.MessageType.SOURCE_UPDATE].call(this, data);
     };
     

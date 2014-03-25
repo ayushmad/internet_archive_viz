@@ -23,6 +23,8 @@ function init_views () {
     mantis.register_new_view(my_tf_Tree);
     var my_dmvm = DataModelVerticalMenu();
     mantis.register_new_view(my_dmvm);
+    var my_fa = ForcedAtlas();
+    mantis.register_new_view(my_fa);
 };
 
 function init_models () {
