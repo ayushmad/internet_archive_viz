@@ -264,3 +264,19 @@
   stroke: #fff;
   stroke-width: 1.5px;
 }
+
+
+#barGraphBaseDiv {
+	position: relative;
+}
+
+#barPlotLegend {
+	position: absolute;
+	z-index: 10;
+}
+#barPlotGraph{
+	position: absolute;
+}
+#barPlotXaxis {
+	position: absolute;
+}

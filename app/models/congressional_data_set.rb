@@ -48,6 +48,22 @@ class CongressionalDataSet
         aggregated_hash["color_scheme"] = node_count_by_domain(year);
         aggregated_hash;
     end
+
+    def self.aggregated_domian_by_country_bar_chart
+        aggregated_hash = {};
+        aggregated_hash["banner"] = "Countries over a period of time";
+        year_list = [];
+        for year in YEARS
+            result_hash = node_count_by_domain(year);
+            if result_hash.has_key?("UNKNOWN")
+                result_hash.delete("UNKNOWN");
+            end
+            year_list.append({:bar_data => result_hash,
+                              :property => year});
+        end
+        aggregated_hash["content"] = year_list;
+        aggregated_hash;
+    end
     
     ######################################################################
     ##################Select top k Indegree Nodes########################
@@ -230,7 +246,7 @@ class CongressionalDataSet
                                                     "format_supported" => ["hierarchical"],
                                                     "display_name" => "Nodes Out-Degree"},
                              "aggregated_domain_by_country" => { "endpoint" => "congressional_dataset",
-                                                                 "format_supported" => ["map"],
+                                                                 "format_supported" => ["map", "bar_data"],
                                                                  "display_name" => "Domain Name Distribution",
                                                                  "sub_filter" => [ { "sub_menutype" => "dropdown",
                                                                                      "sub_menu_name" => "year",
@@ -267,6 +283,8 @@ class CongressionalDataSet
                     year = sub_filters[:year];
                 end
                 aggregated_domain_by_country_map(year);
+            elsif data_format == "bar_data"
+                aggregated_domian_by_country_bar_chart;
             else
                 raise "Data format not supported by model: node_in_degree"
             end
