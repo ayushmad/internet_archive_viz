@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140220064852) do
+ActiveRecord::Schema.define(:version => 20140327162912) do
 
   create_table "congress_edges", :force => true do |t|
     t.integer "src_id"
@@ -26,6 +26,7 @@ ActiveRecord::Schema.define(:version => 20140220064852) do
     t.integer "node_outdegree"
     t.string  "node_tld"
     t.string  "node_ip_map"
+    t.string  "domain"
   end
 
   create_table "congress_tld_aggregates", :force => true do |t|
