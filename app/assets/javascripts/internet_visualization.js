@@ -30,6 +30,8 @@ function init_views () {
     mantis.register_new_view(my_tgm);
     var my_bp = BarPlot();
     mantis.register_new_view(my_bp);
+    var my_sp = ScatterPlot();
+    mantis.register_new_view(my_sp);
 };
 
 function init_models () {

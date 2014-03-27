@@ -9,7 +9,7 @@ function BarPlot() {
 
 	var canvas = d3.select(container)
 	  		.append('div')
-			.attr('id', 'barGraphBaseDiv')
+			.attr('id', 'barPlotBaseDiv')
 			.attr('width', width)
 			.attr('height', height);
 	var legend_canvas = canvas.append('div')
