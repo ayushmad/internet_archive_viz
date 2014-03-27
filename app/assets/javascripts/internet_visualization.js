@@ -32,6 +32,8 @@ function init_views () {
     mantis.register_new_view(my_bp);
     var my_sp = ScatterPlot();
     mantis.register_new_view(my_sp);
+    var my_tgsf = TemporalGraphStaticFlipbook();
+    mantis.register_new_view(my_tgsf);
 };
 
 function init_models () {
