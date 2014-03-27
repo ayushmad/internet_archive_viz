@@ -1,5 +1,6 @@
 //= require d3.v3.min.js
 //= require_tree ./Mantis/
+//= require rickshaw.min.js
 
 // Steps For Initializing Mantis.
 // a) Initialize the Views that you need
@@ -27,6 +28,12 @@ function init_views () {
     mantis.register_new_view(my_tg);
     var my_tgm = TemporalGraphsMerged();
     mantis.register_new_view(my_tgm);
+    var my_bp = BarPlot();
+    mantis.register_new_view(my_bp);
+    var my_sp = ScatterPlot();
+    mantis.register_new_view(my_sp);
+    var my_tgsf = TemporalGraphStaticFlipbook();
+    mantis.register_new_view(my_tgsf);
 };
 
 function init_models () {
