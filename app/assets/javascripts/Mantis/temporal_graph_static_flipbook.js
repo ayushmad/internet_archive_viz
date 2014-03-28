@@ -88,7 +88,10 @@ function TemporalGraphStaticFlipbook() {
 	var base_node = undefined;
 	var legend_map = [];
 	data.nodes.forEach(function(entry) {
-	    if (entry.color) legend_map.push({"name": entry.name, "dimension": d.color});
+	    if (entry.color) {
+		legend_map.push({"name": entry.name, "dimension": entry.color});
+		entry.dimension = entry.color;
+	    }
 	    id_node_map[entry["id"]] = entry;
 	});
 	
@@ -153,7 +156,8 @@ function TemporalGraphStaticFlipbook() {
 	node.append("text")
 	    .attr("x", 12)
 	    .attr("dy", ".35em")
-	    .text(function(d) { return d.name; });
+	    .text(function(d) { return d.name; })
+	    .style("display", "none");
 	
 	function tick() {
 	  link
@@ -167,19 +171,25 @@ function TemporalGraphStaticFlipbook() {
 	}
 
 	function mouseover() {
-	      var node_id = d3.select(this)
-		  	      .select('circle')
-			      .transition()
-		  	      .duration(750)
-			      .attr("r", 20);
+	      var element = d3.select(this)
+		  	      
+	      element.select('circle')
+		     .transition()
+		     .duration(750)
+		     .attr("r", 20);
+	      element.select('text')
+		     .style("display", "block");
+	      		
 	};
     
 	function mouseout() {
-	      var node_id = d3.select(this)
-		  	      .select('circle')
-			      .transition()
-		  	      .duration(750)
-			      .attr("r", 8);
+	      var element = d3.select(this)
+	      element.select('circle')
+		     .transition()
+		     .duration(750)
+		     .attr("r", 8);
+	      element.select('text')
+		     .style("display", "none");
 	};
 
 	/* Rendering the legend */

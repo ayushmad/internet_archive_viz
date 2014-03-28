@@ -151,7 +151,7 @@ class CongressionalDataSet
            to_node = entry['dest_id'];
            weight = entry['weight'];
            node_url = CongressNode.find(to_node)['node_url'];
-           src_list.append([node_url, weight]);
+           src_list.append([node_url, weight, entry['dest_id']]);
         }
         result = CongressEdge.where(:dest_id => node_id);
         dest_list = [];
@@ -159,16 +159,49 @@ class CongressionalDataSet
            from_node = entry['src_id'];
            weight = entry['weight'];
            node_url = CongressNode.find(from_node)['node_url'];
-           dest_list.append([node_url, weight]);
+           dest_list.append([node_url, weight, entry['src_id']]);
+        }
+        {"src" => src_list, "dest" => dest_list}; 
+    end
+    def self.get_neighbours_in_map(node_id, node_id_map, exception_list)
+        result = CongressEdge.where(:src_id => node_id);
+        src_list = [];
+        result.each { |entry|
+           to_node = entry['dest_id'];
+           if not node_id_map.has_key?(to_node)
+               next;
+           end
+           if exception_list.include? to_node
+               next;
+           end
+           weight = entry['weight'];
+           node_url = CongressNode.find(to_node)['node_url'];
+           src_list.append([node_url, weight, entry['dest_id']]);
+        }
+        result = CongressEdge.where(:dest_id => node_id);
+        dest_list = [];
+        result.each { |entry|
+           from_node = entry['src_id'];
+           if not node_id_map.has_key?(from_node)
+               next;
+           end
+           if exception_list.include? from_node
+               next;
+           end
+           weight = entry['weight'];
+           node_url = CongressNode.find(from_node)['node_url'];
+           dest_list.append([node_url, weight, entry['src_id']]);
         }
         {"src" => src_list, "dest" => dest_list}; 
     end
 
-    def self.merge_create_multi_view_graph(base_node, edge_named_map)
+    def self.merge_create_multi_view_graph(base_node, edge_named_map, exception_list)
         node_map = {};
         node_map[base_node] = 1;
         node_count = 2;
         edge_map = [];
+        special_var = 0;
+        node_id_map = {};
         for year in YEARS
             if not edge_named_map.has_key?(year)
                 next;
@@ -178,6 +211,7 @@ class CongressionalDataSet
             year_edge_named_map["src"].each { |entry|
                 if not node_map.has_key?(entry[0])
                     node_map[entry[0]] = node_count;
+                    node_id_map[entry[2]] = entry;
                     other_node = node_count;
                     node_count += 1;
                 else
@@ -190,6 +224,7 @@ class CongressionalDataSet
             year_edge_named_map["dest"].each { |entry|
                 if not node_map.has_key?(entry[0])
                     node_map[entry[0]] = node_count;
+                    node_id_map[entry[2]] = entry;
                     other_node = node_count;
                     node_count += 1;
                 else
@@ -202,10 +237,72 @@ class CongressionalDataSet
             edge_map.append({"property" => year, 
                              "edges" => edge_table});
         end
+        index = 0;
+        for year in YEARS
+            if not edge_named_map.has_key?(year)
+                next;
+            end
+            year_edge_named_map = edge_named_map[year];
+            year_edge_named_map["src"].each { |src_entry|
+                if (node_map[src_entry[0]] == 1) 
+                    next;
+                end
+                added_edges = get_neighbours_in_map(src_entry[2], node_id_map, exception_list);
+                added_edges["src"].each { |edge_entry|
+                    if node_map[src_entry[0]] <= node_map[edge_entry[0]]
+                        next;
+                    end
+                    edge_map[index]["edges"].append({"src" => node_map[src_entry[0]],
+                                                    'dest' => node_map[edge_entry[0]],
+                                                     'weight' => edge_entry[1]});
+                }
+                added_edges["dest"].each { |edge_entry|
+                    if node_map[src_entry[0]] <= node_map[edge_entry[0]]
+                        next;
+                    end
+                    edge_map[index]["edges"].append({"src" => node_map[edge_entry[0]],
+                                                    'dest' => node_map[src_entry[0]],
+                                                     'weight' => edge_entry[1]});
+                }
+            }
+            year_edge_named_map["dest"].each { |src_entry|
+                if (node_map[src_entry[0]] == 1) 
+                    next;
+                end
+                added_edges = get_neighbours_in_map(src_entry[2], node_id_map, exception_list);
+                added_edges["src"].each { |edge_entry|
+                    if node_map[src_entry[0]] <= node_map[edge_entry[0]]
+                        next;
+                    end
+                    edge_map[index]["edges"].append({"src" => node_map[src_entry],
+                                                    'dest' => node_map[edge_entry[0]],
+                                                     'weight' => edge_entry[1]});
+                }
+                added_edges["dest"].each { |edge_entry|
+                    if node_map[src_entry[0]] <= node_map[edge_entry[0]]
+                        next;
+                    end
+                    edge_map[index]["edges"].append({"src" => node_map[edge_entry][0],
+                                                    'dest' => node_map[src_entry],
+                                                     'weight' => edge_entry[1]});
+                }
+            }
+
+            index += 1;
+        end
+
+        special_var  = edge_map.length;
         nodes = [];
         node_map.each do |node_name, id|
-            nodes.append({"name" => node_name,
-                          "id" => id});
+            if id == 1
+                nodes.append({"name" => node_name,
+                              "id" => id,
+                              "color" => special_var});
+                special_var += 1;
+            else
+                nodes.append({"name" => node_name,
+                              "id" => id});
+            end
         end
         {"nodes" => nodes,
          "graphs" => edge_map};
@@ -213,6 +310,7 @@ class CongressionalDataSet
 
     def self.multi_view_graph(search_node)
         node_map = {};
+        node_id_list = [];
         for year in YEARS
             result = CongressNode.where(:year => year, :node_url => search_node);
             node_count = 0;
@@ -221,6 +319,7 @@ class CongressionalDataSet
                     raise "Exception multiple nodes with same name"
                 end
                 node_map[year] = entry['id'];
+                node_id_list.append(entry['id']);
             end
         end
         edge_map = {};
@@ -229,7 +328,7 @@ class CongressionalDataSet
                 edge_map[year] = get_neighbours(node_map[year]);
             end
         end
-        merge_create_multi_view_graph(search_node, edge_map);
+        merge_create_multi_view_graph(search_node, edge_map, node_id_list);
     end
 
     
