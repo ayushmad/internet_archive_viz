@@ -49,6 +49,17 @@ class CongressionalDataSet
         aggregated_hash;
     end
 
+    def self.prune_result_hash_logrithmic_scale(result_hash)
+        pruned_hash = {};
+        result_hash.each do |domain, val|
+            log_value = Math.log2(val).to_i();
+            if log_value > 1
+                pruned_hash[domain] = log_value;
+            end
+        end
+        pruned_hash;
+    end
+
     def self.aggregated_domian_by_country_bar_chart
         aggregated_hash = {};
         aggregated_hash["banner"] = "Countries over a period of time";
@@ -58,7 +69,11 @@ class CongressionalDataSet
             if result_hash.has_key?("UNKNOWN")
                 result_hash.delete("UNKNOWN");
             end
-            year_list.append({:bar_data => result_hash,
+            pruned_hash = prune_result_hash_logrithmic_scale(result_hash)
+            if pruned_hash.empty?
+                next;
+            end
+            year_list.append({:bar_data => pruned_hash,
                               :property => year});
         end
         aggregated_hash["content"] = year_list;
