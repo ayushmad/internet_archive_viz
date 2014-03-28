@@ -267,7 +267,7 @@ class CongressionalDataSet
                 end
 
             }
-
+            puts edge_map[index];
             index += 1;
         end
 
