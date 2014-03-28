@@ -129,7 +129,7 @@ function TemporalGraphStaticFlipbook() {
 			     .links(links_list)
 			     .size([width, height])
 			     .linkDistance(60)
-			     .charge(-300)
+			     .charge(-40)
 			     .gravity(0)
 			     .on("tick", tick)
 			     .start();

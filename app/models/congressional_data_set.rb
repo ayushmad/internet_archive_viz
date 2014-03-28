@@ -170,6 +170,31 @@ class CongressionalDataSet
         {"src" => src_list, "dest" => dest_list}; 
     end
 
+    def self.get_neighbours_faster(node_id)
+        #FIXME:- Cleanup to a better join
+        src_list = [];
+        dest_list = [];
+        sql_query_source = "select * FROM congress_edges LEFT JOIN congress_nodes on congress_nodes.id = congress_edges.dest_id where congress_edges.src_id = " + node_id.to_s();
+        result = ActiveRecord::Base.connection.execute(sql_query_source);
+        result.each { |entry|
+           to_node = entry['dest_id'];
+           if to_node == node_id
+               next;
+           end
+           src_list.append([entry['node_url'], entry['weight'], to_node]);
+        }
+        sql_query_dest = "select * FROM congress_edges LEFT JOIN congress_nodes on congress_nodes.id = congress_edges.dest_id where congress_edges.dest_id = " + node_id.to_s();
+        result = ActiveRecord::Base.connection.execute(sql_query_dest);
+        result.each { |entry|
+           from_node = entry['src_id'];
+           if from_node == node_id
+               next;
+           end
+           dest_list.append([entry['node_url'], entry['weight'], from_node]);
+        }
+        {"src" => src_list, "dest" => dest_list}
+    end
+
     def self.get_edges_inside_neighbourhood(neighbour_nodes)
         CongressEdge.where(:src_id => neighbour_nodes, :dest_id => neighbour_nodes);
     end
@@ -278,7 +303,7 @@ class CongressionalDataSet
         edge_map = {};
         for year in YEARS
             if node_map.has_key?(year)
-                edge_map[year] = get_neighbours(node_map[year]);
+                edge_map[year] = get_neighbours_faster(node_map[year]);
             end
         end
         merge_create_multi_view_graph(search_node, edge_map, node_id_list);

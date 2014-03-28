@@ -75,7 +75,7 @@ function TemporalGraphs() {
 			     .links(links_list)
 			     .size([canvas_dimensions.width, canvas_dimensions.height])
 			     .linkDistance(60)
-			     .charge(-300)
+			     .charge(-40)
 			     .on("tick", tick)
 			     .start();
 
