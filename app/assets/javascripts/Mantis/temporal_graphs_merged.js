@@ -23,7 +23,6 @@ function TemporalGraphsMerged() {
 	    var pos = 30;
 	    var legend_table = base.append('svg:g');
 	    box_size = 15;
-	    //legend_table.selectAll('.TemporalGraphsMergedLegend')
 	    legend_table.selectAll('rect')
 		.data(color_map)
 		.enter()
@@ -109,10 +108,10 @@ function TemporalGraphsMerged() {
 			     .start();
 
 	                
-	var link = canvas.selectAll(".link")
+	var link = canvas.selectAll(".TemporalGraphsMergedlink")
 	    		 .data(force_layout.links())
 	    		 .enter().append("line")
-	    		 .attr("class", "TemporalGraphsMergedlink");
+	    		 .attr("class", function(d) { return "TemporalGraphsMergedlink connects" + d.source.id + " connects" + d.target.id;})
 
 	var node = canvas.selectAll(".node")
 			 .data(force_layout.nodes())
@@ -167,6 +166,9 @@ function TemporalGraphsMerged() {
 	function mouseover() {
 	      var node_id = d3.select(this)
 		  	      .attr('node_id');
+	      d3.selectAll('.connects' + node_id)
+		    .style('opacity', '0.7');
+
 	      function node_activate(selector) {
 			selector.select("circle").transition()
 		          	.duration(750)
@@ -181,6 +183,9 @@ function TemporalGraphsMerged() {
 	function mouseout() {
 	      var node_id = d3.select(this)
 		  	      .attr('node_id');
+	      d3.selectAll('.connects' + node_id)
+		    .style('opacity', '0.2');
+
 	      function node_deactivate(selector) {
 			selector.select("circle").transition()
 		          	.duration(750)

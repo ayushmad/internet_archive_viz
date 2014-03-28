@@ -64,7 +64,12 @@ function TemporalGraphs() {
 	var canvas = this.canvas;
 	var canvas_group = canvas.append('g')
 	    			 .attr("transform", "translate(" + canvas_dimensions.start_x + ", " + canvas_dimensions.start_y + ")");
-	
+
+	nodes.forEach(function(entry) {
+	    entry.x = canvas_dimensions.height/2;
+	    entry.y = canvas_dimensions.width/2;
+	});
+
 	var force_layout = d3.layout.force()
 	    		     .nodes(nodes)
 			     .links(links_list)
@@ -84,7 +89,7 @@ function TemporalGraphs() {
 	var link = canvas_group.selectAll(".TemporalGraphslink")
 	    .data(force_layout.links())
 	    .enter().append("line")
-	    .attr("class", "TemporalGraphslink");
+	    .attr("class", function(d) {return "TemporalGraphslink connects" + d.source.id + " connects" + d.target.id;})
 
 	var node = canvas_group.selectAll(".TemporalGraphsnode")
 	    .data(force_layout.nodes())
@@ -92,9 +97,6 @@ function TemporalGraphs() {
 	    .attr("class", function (d) { return "TemporalGraphsnode"})
 	    .attr("node_id", function(d) { if (d.id == 1) {
 						    d.fixed = true;
-						    console.log(canvas_dimensions);
-						    d.x = canvas_dimensions.height/2;
-						    d.y = canvas_dimensions.width/2;
 					    }
 					    return d.id;})
 	    .on("mouseover", mouseover)
@@ -127,6 +129,8 @@ function TemporalGraphs() {
 	function mouseover() {
 	      var node_id = d3.select(this)
 		  	      .attr('node_id');
+	      d3.selectAll('.connects' + node_id)
+		    .style('opacity', '0.7');
 	      function node_activate(selector) {
 			selector.select("circle").transition()
 		          	.duration(750)
@@ -141,6 +145,8 @@ function TemporalGraphs() {
 	function mouseout() {
 	      var node_id = d3.select(this)
 		  	      .attr('node_id');
+	      d3.selectAll('.connects' + node_id)
+		    .style('opacity', '0.2');
 	      function node_deactivate(selector) {
 			selector.select("circle").transition()
 		          	.duration(750)

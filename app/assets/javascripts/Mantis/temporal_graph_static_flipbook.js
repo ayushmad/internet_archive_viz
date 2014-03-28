@@ -93,6 +93,10 @@ function TemporalGraphStaticFlipbook() {
 		entry.dimension = entry.color;
 	    }
 	    id_node_map[entry["id"]] = entry;
+	    if (entry["id"] == 1) {
+		entry.x = width/2;
+		entry.y = height/2;
+	    }
 	});
 	
 	var links_list = [];
@@ -134,7 +138,7 @@ function TemporalGraphStaticFlipbook() {
 	var link = canvas.selectAll(".TemporalGraphStaticFlipbooklink")
 	    		 .data(force_layout.links())
 	    		 .enter().append("line")
-	    		 .attr("class", "TemporalGraphStaticFlipbooklink")
+	    		 .attr("class", function(d) {return "TemporalGraphStaticFlipbooklink connects" + d.source.id + " connects" + d.target.id;})
 			 .style('display', 'none')
 			 .attr("time_dimension", function(d) {return d.dimension;});
 
@@ -144,8 +148,6 @@ function TemporalGraphStaticFlipbook() {
 			 .attr("class", function (d) { return "TemporalGraphStaticFlipbooknode"})
 			 .attr("node_id", function(d) { if (d.id == 1) {
 			     					d.fixed = true;
-								d.x = height/2;
-								d.y = width/2;
 			     				}
 			 				return d.id;})
 			 .on("mouseover", mouseover)
@@ -181,6 +183,9 @@ function TemporalGraphStaticFlipbook() {
 
 	function mouseover() {
 	      var element = d3.select(this)
+	      var node_id = element.attr('node_id');
+	      canvas.selectAll('.connects' + node_id)
+		    .style('opacity', '0.7');
 		  	      
 	      element.select('circle')
 		     .transition()
@@ -193,6 +198,10 @@ function TemporalGraphStaticFlipbook() {
     
 	function mouseout() {
 	      var element = d3.select(this)
+	      var node_id = element.attr('node_id');
+	      d3.selectAll('.connects' + node_id)
+		    .style('opacity', '0.2');
+	      
 	      element.select('circle')
 		     .transition()
 		     .duration(750)
