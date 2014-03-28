@@ -308,6 +308,81 @@ class CongressionalDataSet
         merge_create_multi_view_graph(search_node, edge_map, node_id_list);
     end
 
+    #####################################################
+    ################Domain Graphs########################
+    #####################################################
+    def self.prune_edges_to_first_level(edges_record)
+        edges_hash = {};
+        for edge in edges_record
+            src_node = edge["src_node_url"].chomp.split('.').last(2).join('.');
+            dest_node = edge["dest_node_url"].chomp.split('.').last(2).join('.');
+            if src_node == dest_node
+                next;
+            end
+            if not edges_hash.has_key?(src_node)
+                edges_hash[src_node] = {};
+            end
+            if not edges_hash[src_node].has_key?(dest_node)
+                edges_hash[src_node] = {};
+            end
+            edges_hash[src_node][dest_node] = {:weight => edge["edge_weight"], :year => edge["src_year"]};
+        end
+        edges_hash;
+    end
+
+    def self.get_domain_graph(domain)
+        edges_record = get_edges_nodes_inside_domain(domain);
+        edges_hash = prune_edges_to_first_level(edges_record);
+        node_count = 2;
+        node_list = [];
+        node_hash = {};
+        edge_list_year = {};
+        edges_hash.each do |src, dest_hash|
+            src_node_id = 0;
+            if not node_hash.has_key?(src)
+                node_hash[src] = node_count
+                src_node_id = node_count;
+                node_count += 1;
+                node_list.append({:name => src, :id => src_node_id});
+            else
+                src_node_id = node_hash[src];
+            end
+            dest_hash.each do |dest, edge_hash|
+                if not node_hash.has_key?(dest)
+                    node_hash[dest] = node_count
+                    dest_node_id = node_count;
+                    node_count += 1;
+                    node_list.append({:name => dest, :id => dest_node_id});
+                else
+                    dest_node_id = node_hash[dest];
+                end
+                year = edge_hash[:year];
+                if not edge_list_year.has_key?(year)
+                    edge_list_year[year] = [];
+                end
+                edge_list_year[year].append({:src => src_node_id, :dest => dest_node_id, :weight => edge_hash[:weight]});
+            end
+        end
+        edges_result_list = [];
+        for year in YEARS
+            year = year.to_i();
+            if edge_list_year.has_key?(year)
+                edges_result_list.append({:property => year, :edges => edge_list_year[year]});
+            end
+        end
+        {"nodes" => node_list,
+         "graphs" => edges_result_list};
+    end
+
+    def self.get_edges_nodes_inside_domain(domain)
+        sql_query = "SELECT cn1.id as src_id, cn1.node_url as src_node_url, cn1.domain as src_node_domain,\
+                     cn1.year as src_year, cn2.year as dest_year, cn2.id as dest_id, cn2.node_url as dest_node_url,\
+                     cn2.domain as dest_node_domain, ce.src_id, ce.dest_id , ce.weight as edge_weight FROM congress_edges ce LEFT JOIN congress_nodes\
+                     cn1 ON cn1.id=ce.src_id LEFT JOIN congress_nodes cn2 ON cn2.id=ce.dest_id where cn1.domain='#{domain}' and cn2.domain='#{domain}' and cn1.node_url != cn2.node_url"
+        ActiveRecord::Base.connection.execute(sql_query)
+    end
+
+
     
     #####################################################
     ################Accepted Json########################
@@ -337,7 +412,16 @@ class CongressionalDataSet
                                                                         "sub_menu_name" => "node_name",
                                                                         "sub_menu_display_name" => "Root Node"
                                                                 }]
-                                                    }
+                                                    },
+                              "multi_view_domain_graphs" => { "endpoint" => "congressional_dataset",
+                                                              "format_supported" => ["graph_list"],
+                                                              "display_name" => "Domain Graphs Over Time",
+                                                               "sub_filter" => [{ "sub_menutype" => "dropdown",
+                                                                                  "sub_menu_name" => "domain",
+                                                                                  "sub_menu_display_name" => "Select Domain",
+                                                                                  "sub_menu_options" => [{"name" => "edu"}, {"name" => "us"}, {"name" => "uk"}, {"name" => "in"}, {"name" => "gov"}]
+                                                                        }]
+                                                    },
                             }
             model_listing;
         elsif model == "node_in_degree"
@@ -368,6 +452,13 @@ class CongressionalDataSet
             if data_format == "graph_list" and sub_filters.has_key?(:node_name)
                 search_node = sub_filters[:node_name];
                 multi_view_graph(search_node);
+            else
+                raise "Data format not supported by model: node_in_degree"
+            end
+        elsif model == "multi_view_domain_graphs"
+            if data_format == "graph_list" and sub_filters.has_key?(:domain)
+                domain = sub_filters[:domain];
+                get_domain_graph(domain);
             else
                 raise "Data format not supported by model: node_in_degree"
             end

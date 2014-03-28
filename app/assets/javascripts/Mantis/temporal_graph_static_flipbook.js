@@ -102,7 +102,6 @@ function TemporalGraphStaticFlipbook() {
 	var links_list = [];
 	var group_count  = data.graphs.length;
 	for (var index = 0; index < group_count; index ++) {
-	    var nodes_sub_group = {1:base_node};
 	    var sub_graph_set = data.graphs[index];
 	    var dimension = sub_graph_set.property;
 	    sub_graph_set.edges.forEach(function (edge) {
