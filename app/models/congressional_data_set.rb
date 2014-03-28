@@ -261,8 +261,8 @@ class CongressionalDataSet
                 if edge_entry["src_id"] == exception_list[index] or edge_entry["dest_id"] == exception_list[index]
                     next;
                 else
-                    edge_map[index]["edges"].append({'src' => node_id_map[edge_entry["src_id"]],
-                                                     'dest' => node_id_map[edge_entry["dest_id"]],
+                    edge_map[index]["edges"].append({'src' => node_id_map[edge_entry["src_id"].to_s()],
+                                                     'dest' => node_id_map[edge_entry["dest_id"].to_s()],
                                                      'weight' => edge_entry["weight"]});
                 end
 
