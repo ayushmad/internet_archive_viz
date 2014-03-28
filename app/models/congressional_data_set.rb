@@ -254,8 +254,6 @@ class CongressionalDataSet
             year_edge_named_map = edge_named_map[year];
             year_nodes = year_edge_named_map["src"].map {|entry| entry[2]} + year_edge_named_map["dest"].map {|entry| entry[2]};
             edges = get_edges_inside_neighbourhood(year_nodes);
-            puts edges.inspect;
-            puts node_id_map.inspect;
             node_id_map[exception_list[index]] = 1
             edges.each { |edge_entry|
                 if edge_entry["src_id"] == exception_list[index] or edge_entry["dest_id"] == exception_list[index]
@@ -267,7 +265,6 @@ class CongressionalDataSet
                 end
 
             }
-            puts edge_map[index];
             index += 1;
         end
 
