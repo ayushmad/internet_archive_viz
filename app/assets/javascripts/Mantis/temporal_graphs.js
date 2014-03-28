@@ -81,16 +81,22 @@ function TemporalGraphs() {
 		    .text(banner);
 	                
 	
-	var link = canvas_group.selectAll(".link")
+	var link = canvas_group.selectAll(".TemporalGraphslink")
 	    .data(force_layout.links())
 	    .enter().append("line")
 	    .attr("class", "TemporalGraphslink");
 
-	var node = canvas_group.selectAll(".node")
+	var node = canvas_group.selectAll(".TemporalGraphsnode")
 	    .data(force_layout.nodes())
 	    .enter().append("g")
 	    .attr("class", function (d) { return "TemporalGraphsnode"})
-	    .attr("node_id", function(d) { return d.id;})
+	    .attr("node_id", function(d) { if (d.id == 1) {
+						    d.fixed = true;
+						    console.log(canvas_dimensions);
+						    d.x = canvas_dimensions.height/2;
+						    d.y = canvas_dimensions.width/2;
+					    }
+					    return d.id;})
 	    .on("mouseover", mouseover)
 	    .on("mouseout", mouseout)
 	    .call(force_layout.drag);
@@ -109,11 +115,13 @@ function TemporalGraphs() {
 	      .attr("x1", function(d) { return d.source.x; })
 	      .attr("y1", function(d) { return d.source.y; })
 	      .attr("x2", function(d) { return d.target.x; })
-	      
 	      .attr("y2", function(d) { return d.target.y; });
 
-	  node
-	      .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+	   node.attr("transform", function(d) { if (!d.fixed) {
+		  			          d.x = Math.max(20, Math.min(canvas_dimensions.width - 20, d.x));
+		  				  d.y = Math.max(20, Math.min(canvas_dimensions.height - 20, d.y));
+						 }
+		  				return "translate(" + d.x + "," + d.y + ")"; });
 	}
 
 	function mouseover() {

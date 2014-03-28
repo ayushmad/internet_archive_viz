@@ -118,7 +118,12 @@ function TemporalGraphsMerged() {
 			 .data(force_layout.nodes())
 			 .enter().append("g")
 			 .attr("class", function (d) { return "TemporalGraphsMergednode"})
-			 .attr("node_id", function(d) { return d.id;})
+			 .attr("node_id", function(d) { if (d.id == 1) {
+			     					d.fixed = true;
+								d.x = height/2;
+								d.y = width/2;
+			     				}
+			 				return d.id;})
 			 .on("mouseover", mouseover)
 			 .on("mouseout", mouseout)
 			 .call(force_layout.drag);
@@ -145,14 +150,18 @@ function TemporalGraphsMerged() {
   // Push different nodes in different directions for clustering.
   		var k = 6 * e.alpha;
   		nodes.forEach(function(o) {
-		    	if (o.node_type == 'fixed') {
+		    	if (o.fixed) {
 			    return;
 			}
     			o.y += (o.dimension) & 1 ? k : -k;
     			o.x += (o.dimension) & 2 ? k : -k;
   		});
+	   	node.attr("transform", function(d) { if (!d.fixed) {
+		  			          d.x = Math.max(20, Math.min(width - 20, d.x));
+		  				  d.y = Math.max(20, Math.min(height - 20, d.y));
+						 }
+		  				return "translate(" + d.x + "," + d.y + ")"; });
 
-	      node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
 	}
 
 	function mouseover() {

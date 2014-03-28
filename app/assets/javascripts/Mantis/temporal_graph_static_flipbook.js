@@ -124,24 +124,30 @@ function TemporalGraphStaticFlipbook() {
 	    		     .nodes(nodes)
 			     .links(links_list)
 			     .size([width, height])
-			     .linkDistance(100)
+			     .linkDistance(60)
 			     .charge(-300)
+			     .gravity(0)
 			     .on("tick", tick)
 			     .start();
 
 	                
-	var link = canvas.selectAll(".link")
+	var link = canvas.selectAll(".TemporalGraphStaticFlipbooklink")
 	    		 .data(force_layout.links())
 	    		 .enter().append("line")
 	    		 .attr("class", "TemporalGraphStaticFlipbooklink")
 			 .style('display', 'none')
 			 .attr("time_dimension", function(d) {return d.dimension;});
 
-	var node = canvas.selectAll(".node")
+	var node = canvas.selectAll(".TemporalGraphStaticFlipbooknode")
 			 .data(force_layout.nodes())
 			 .enter().append("g")
 			 .attr("class", function (d) { return "TemporalGraphStaticFlipbooknode"})
-			 .attr("node_id", function(d) { return d.id;})
+			 .attr("node_id", function(d) { if (d.id == 1) {
+			     					d.fixed = true;
+								d.x = height/2;
+								d.y = width/2;
+			     				}
+			 				return d.id;})
 			 .on("mouseover", mouseover)
 			 .on("mouseout", mouseout)
 			 .attr("time_dimension", function(d) { return d.dimension;})
@@ -166,8 +172,11 @@ function TemporalGraphStaticFlipbook() {
 	      .attr("x2", function(d) { return d.target.x; })
 	      .attr("y2", function(d) { return d.target.y; });
 
-	  node
-	      .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+	   node.attr("transform", function(d) { if (!d.fixed) {
+		  			          d.x = Math.max(20, Math.min(width - 20, d.x));
+		  				  d.y = Math.max(20, Math.min(height - 20, d.y));
+						 }
+		  				return "translate(" + d.x + "," + d.y + ")"; });
 	}
 
 	function mouseover() {
