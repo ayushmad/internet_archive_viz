@@ -135,6 +135,8 @@ function TemporalGraphStaticFlipbook() {
 			     .gravity(0)
 			     .on("tick", tick)
 			     .start();
+	var drag = force_layout.drag()
+	    		       .on("dragstart", dragstart);
 
 	                
 	var link = canvas.selectAll(".TemporalGraphStaticFlipbooklink")
@@ -160,7 +162,9 @@ function TemporalGraphStaticFlipbook() {
 	node.append("circle")
 	    .attr("r", 8)
             .style('fill', function (d) { return fill_color(d.dimension);})
-            .style('stroke', function (d) { return d3.rgb(fill_color(d.dimension)).darker(2);});
+            .style('stroke', function (d) { return d3.rgb(fill_color(d.dimension)).darker(2);})
+	    .on("dblclick", dblclick)
+	    .call(drag);
 	
 
 	node.append("text")
@@ -211,6 +215,15 @@ function TemporalGraphStaticFlipbook() {
 	      element.select('text')
 		     .style("display", "none");
 	};
+
+	function dblclick(d) {
+	      d3.select(this).classed("fixed", d.fixed = false);
+	}
+
+	function dragstart(d) {
+	      d3.select(this).classed("fixed", d.fixed = true);
+	}
+
 	
 	this.force_layout = force_layout;
 	/* Rendering the legend */
