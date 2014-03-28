@@ -197,9 +197,100 @@ function TemporalGraphsMerged() {
 	      }
 	      d3.selectAll($('[node_id=' + node_id + ']')).call(node_deactivate);
 	};
-
+	
+	this.force_layout = force_layout;
 	/* Rendering the legend */
 	this.render_legend(legend_map, fill_color);
+    };
+    
+     TemporalGraphsMerged.create_charge_button = function () {
+	// Creating chrage slider
+	var width = this.width;
+	var force_layout = this.force_layout;
+	var height = this.height;
+	var canvas = this.canvas;
+	var button_group = canvas.append("g");
+	var force_layout_charge = force_layout.charge();
+	var max_charge = 100;
+	var min_charge = -400;
+	var charge_step = 50;
+
+	function update_charge_on_layout(charge) {
+		force_layout.stop();
+		force_layout.charge(charge);
+		force_layout.start();
+	}
+	function increase_charge() {
+		var charge = parseInt(force_layout.charge());
+		if (charge < max_charge) {
+			charge = charge + charge_step;
+			update_charge_on_layout(charge);
+		}
+		return charge;
+	}
+
+	function decrease_charge() {
+		var charge = parseInt(force_layout.charge());
+		if (charge > min_charge) {
+			charge = charge - charge_step;
+			update_charge_on_layout(charge);
+		}
+		return charge;
+	}
+
+	button_group.append("rect")
+	      .attr('x', width-360)
+	      .attr('y', 60)
+	      .attr('rx', 5)
+	      .attr('rx', 5)
+	      .attr('width', 120)
+	      .attr('height', 30)
+	      .attr('class', 'increaseChargeButton')
+	      .style('fill', '#659EC7')
+	      .style('cursor', 'hand')
+	      .style('cursor', 'pointer')
+	      .on('click', function(d) {
+		 var new_charge = increase_charge();
+		 d3.select('.increaseChargeText')
+	           .text("Charge " + (new_charge + charge_step)); 
+		 d3.select('.decreaseChargeText')
+	           .text("Charge " + (new_charge - charge_step)); 
+	      });
+	button_group.append("rect")
+	      .attr('x', width-120)
+	      .attr('y', 60)
+	      .attr('rx', 5)
+	      .attr('rx', 5)
+	      .attr('width', 120)
+	      .attr('height', 30)
+	      .attr('class', 'decreaseChargeButton')
+	      .style('fill', '#659EC7')
+	      .style('cursor', 'hand')
+	      .style('cursor', 'pointer')
+	      .on('click', function(d) {
+		 var new_charge = decrease_charge();
+		 d3.select('.increaseChargeText')
+	           .text("Charge " + (new_charge + charge_step)); 
+		 d3.select('.decreaseChargeText')
+	           .text("Charge " + (new_charge - charge_step)); 
+	      });
+
+	button_group.append('text')
+	    	    .attr('x', width-355)
+		    .attr('y', 80)
+		    .attr('class', 'increaseChargeText')
+		    .style('cursor', 'hand')
+		    .style('cursor', 'pointer')
+		    .text("Charge " + (force_layout_charge + charge_step));
+	
+	button_group.append('text')
+	    	    .attr('x', width-115)
+		    .attr('y', 80)
+		    .attr('class', 'decreaseChargeText')
+		    .style('cursor', 'hand')
+		    .style('cursor', 'pointer')
+		    .text("Charge " + (force_layout_charge - charge_step));
+ 
     };
     
     TemporalGraphsMerged.message_handler[mantis.MessageType.SOURCE_UPDATE] = function (data) {
@@ -207,6 +298,7 @@ function TemporalGraphsMerged() {
 	d3.select(this.container).html('');
 	this.create_layout();
 	this.render_layout(data);
+	this.create_charge_button();
     };
 
     TemporalGraphsMerged.message_handler[mantis.MessageType.VIEW_INIT] = function (data) {

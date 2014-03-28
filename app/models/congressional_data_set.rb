@@ -610,7 +610,7 @@ class CongressionalDataSet
                                                     },
                               "multi_view_one_hop_domain_graphs" => { "endpoint" => "congressional_dataset",
                                                               "format_supported" => ["graph_list"],
-                                                              "display_name" => "Domain Graphs Over Time",
+                                                              "display_name" => "Domain Graphs With Hop",
                                                                "sub_filter" => [{ "sub_menutype" => "dropdown",
                                                                                   "sub_menu_name" => "domain",
                                                                                   "sub_menu_display_name" => "Select Domain",

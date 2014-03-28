@@ -1,6 +1,6 @@
-//= require d3.v3.min.js
-//= require_tree ./Mantis/
-//= require rickshaw.min.js
+    //= require d3.v3.min.js
+    //= require_tree ./Mantis/
+    //= require rickshaw.min.js
 
 // Steps For Initializing Mantis.
 // a) Initialize the Views that you need
