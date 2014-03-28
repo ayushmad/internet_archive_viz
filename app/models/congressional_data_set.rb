@@ -183,7 +183,7 @@ class CongressionalDataSet
            end
            src_list.append([entry['node_url'], entry['weight'], to_node]);
         }
-        sql_query_dest = "select * FROM congress_edges LEFT JOIN congress_nodes on congress_nodes.id = congress_edges.dest_id where congress_edges.dest_id = " + node_id.to_s();
+        sql_query_dest = "select * FROM congress_edges LEFT JOIN congress_nodes on congress_nodes.id = congress_edges.src_id where congress_edges.dest_id = " + node_id.to_s();
         result = ActiveRecord::Base.connection.execute(sql_query_dest);
         result.each { |entry|
            from_node = entry['src_id'];
