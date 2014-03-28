@@ -356,7 +356,7 @@ class CongressionalDataSet
                 else
                     dest_node_id = node_hash[dest];
                 end
-                year = edge_hash[:year];
+                year = edge_hash[:year].to_s();
                 if not edge_list_year.has_key?(year)
                     edge_list_year[year] = [];
                 end
@@ -365,7 +365,7 @@ class CongressionalDataSet
         end
         edges_result_list = [];
         for year in YEARS
-            year = year.to_i();
+            year = year.to_s();
             if edge_list_year.has_key?(year)
                 edges_result_list.append({:property => year, :edges => edge_list_year[year]});
             end
