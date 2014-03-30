@@ -564,6 +564,112 @@ class CongressionalDataSet
          "graphs" => edges_result_list};
     end
 
+    #####################################################
+    ################Domain One Hop Paths################
+    #####################################################
+
+    def self.get_edges_nodes_one_hop_paths(start_node, dest_node)
+        sql_query = "SELECT cn1.id as src_id, cn1.node_url as src_node_url, cn1.domain as\
+                     src_node_domain, cn1.year as src_year, cn2.year as dest_year, cn2.id as\
+                     dest_id, cn2.node_url as dest_node_url, cn2.domain as dest_node_domain,\
+                     ce1.src_id, ce1.dest_id , ce1.weight as source_edge_weight,\
+                     ch.node_url as hop_node_url, ce2.weight as dest_edge_weight FROM congress_edges\
+                     ce1 LEFT JOIN congress_nodes cn1 ON cn1.id=ce1.src_id LEFT JOIN congress_edges\
+                     ce2 ON ce1.dest_id=ce2.src_id LEFT JOIN congress_nodes cn2 ON cn2.id=ce2.dest_id\
+                     LEFT JOIN congress_nodes ch ON ce1.dest_id = ch.id \
+                     where cn1.node_url='#{start_node}' and cn2.node_url='#{dest_node}' and cn1.id != cn2.id"
+        ActiveRecord::Base.connection.execute(sql_query)
+    end
+
+    def self.prune_edges_to_first_level_for_one_hop_paths(edges_record)
+        edges_hash = {};
+        for edge in edges_record
+            src_node = edge["src_node_url"].chomp.split('.').last(2).join('.');
+            hop_node = edge["hop_node_url"].chomp.split('.').last(2).join('.');
+            dest_node = edge["dest_node_url"].chomp.split('.').last(2).join('.');
+            if src_node == dest_node
+                next;
+            end
+            if not edges_hash.has_key?(src_node)
+                edges_hash[src_node] = {};
+            end
+            if not edges_hash[src_node].has_key?(hop_node)
+                edges_hash[src_node][hop_node] = {};
+            end
+            if not edges_hash[src_node][hop_node].has_key?(edge["src_year"])
+                edges_hash[src_node][hop_node][edge["src_year"]]  = 0
+            end
+            if not edges_hash.has_key?(hop_node)
+                edges_hash[hop_node] = {};
+            end
+            if not edges_hash[src_node][hop_node].has_key?(edge["src_year"])
+                edges_hash[src_node][hop_node] = {edge["src_year"] => 0};
+            end
+            if not edges_hash.has_key?(hop_node)
+                edges_hash[hop_node] = {};
+            end
+            if not edges_hash[hop_node].has_key?(dest_node)
+                edges_hash[hop_node][dest_node] = {};
+            end
+            if not edges_hash[hop_node][dest_node].has_key?(edge["src_year"])
+                edges_hash[hop_node][dest_node][edge["src_year"]] = 0;
+            end
+            edges_hash[src_node][hop_node][edge["src_year"]] += edge["source_edge_weight"].to_i();
+            edges_hash[hop_node][dest_node][edge["dest_year"]] += edge["dest_edge_weight"].to_i();
+        end
+        return edges_hash
+    end
+    
+    def self.get_domain_one_hop_path(start_node, dest_node)
+        edges_record = get_edges_nodes_one_hop_paths(start_node, dest_node);
+        edges_hash = prune_edges_to_first_level_for_one_hop_paths(edges_record);
+        node_count = 1;
+        node_hash = {};
+        node_list = [];
+        node_list.append({:name => start_node, :id => node_count});
+        node_hash[start_node] = node_count;
+        node_count += 1;
+        edge_list_year = {};
+        edges_hash.each do |src, dest_hash|
+            src_node_id = 0;
+            if not node_hash.has_key?(src)
+                node_hash[src] = node_count
+                src_node_id = node_count;
+                node_count += 1;
+                node_list.append({:name => src, :id => src_node_id});
+            else
+                src_node_id = node_hash[src];
+            end
+            dest_hash.each do |dest, edge_year_hash|
+                if not node_hash.has_key?(dest)
+                    node_hash[dest] = node_count
+                    dest_node_id = node_count;
+                    node_count += 1;
+                    node_list.append({:name => dest, :id => dest_node_id});
+                else
+                    dest_node_id = node_hash[dest];
+                end
+                edge_year_hash.each do |year, weight|
+                    year = year.to_s();
+                    if not edge_list_year.has_key?(year)
+                        edge_list_year[year] = [];
+                    end
+                    edge_list_year[year].append({:src => src_node_id, :dest => dest_node_id, :weight => weight});
+                end
+            end
+        end
+        edges_result_list = [];
+        for year in YEARS
+            year = year.to_s();
+            if edge_list_year.has_key?(year)
+                edges_result_list.append({:property => year, :edges => edge_list_year[year]});
+            end
+        end
+        # Hop is the first element in the node list hence accessing it directly
+        node_list.first["color"] = node_list.length;
+        {"nodes" => node_list,
+         "graphs" => edges_result_list};
+    end
 
 
     
@@ -618,6 +724,18 @@ class CongressionalDataSet
                                                                                   "sub_menu_display_name" => "Select Domain",
                                                                                   "sub_menu_options" => [{"name" => "edu"}, {"name" => "us"}, {"name" => "uk"}, {"name" => "in"}]
                                                                         }]
+                                                    },
+                              "multi_view_one_hop_path" => { "endpoint" => "congressional_dataset",
+                                                             "format_supported" => ["graph_list"],
+                                                             "display_name" => "Paths Between Nodes",
+                                                             "sub_filter" => [{ "sub_menutype" => "search_bar",
+                                                                        "sub_menu_name" => "start_node",
+                                                                        "sub_menu_display_name" => "Source Node"
+                                                                },
+                                                                { "sub_menutype" => "search_bar",
+                                                                  "sub_menu_name" => "dest_node",
+                                                                  "sub_menu_display_name" => "Destination Node"
+                                                                }]
                                                     },
                             }
             model_listing;
@@ -677,6 +795,20 @@ class CongressionalDataSet
                     domain = sub_filters[:domain];
                 end
                 get_domain_one_hop_graph(domain);
+            else
+                raise "Data format not supported by model: node_in_degree"
+            end
+        elsif model == "multi_view_one_hop_path"
+            if data_format == "graph_list"
+                start_node = "house.gov"
+                dest_node = "senete.gov"
+                if sub_filters.has_key?(:start_node)
+                    start_node = sub_filters[:start_node];
+                end
+                if sub_filters.has_key?(:dest_node)
+                    dest_node = sub_filters[:dest_node];
+                end
+                get_domain_one_hop_path(start_node, dest_node);
             else
                 raise "Data format not supported by model: node_in_degree"
             end
