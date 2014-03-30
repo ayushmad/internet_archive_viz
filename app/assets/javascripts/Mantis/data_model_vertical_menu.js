@@ -38,8 +38,8 @@ function DataModelVerticalMenu() {
 		     } else {
 			 if (d.open == undefined) {
 			     d.open = true;
-			     parent_d3_obj = this;
-			     parent_menu_name = d.name;
+			     var parent_d3_obj = this;
+			     var parent_menu_name = d.name;
 			     var sub_menu_div = d3.select('#' + parent_menu_name)
 			       		          .append('div')
 			       		          .attr('class', 'subMenu')
@@ -94,10 +94,11 @@ function DataModelVerticalMenu() {
 						// Extracting
 						var sub_filter_options = {};
 						// Extracting select options
-						$('.subMenuInput').each( function (index, element) {
+						$('#'+parent_menu_name).find('.subMenuInput').each( function (index, element) {
 						    			selected_element = $(this);
 						    			sub_filter_options[selected_element.attr('key-name')] = selected_element.val();
 						    			});
+
 		     				parent_obj.send_message_controller({ 'type': "3",
 		     					     			     'system_name': parent_obj.system_name,
 		     					     			     'source_id': parent_menu_name,
