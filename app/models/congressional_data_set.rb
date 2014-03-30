@@ -350,7 +350,7 @@ class CongressionalDataSet
             if not edges_hash[src_node][dest_node].has_key?(edge["src_year"])
                 edges_hash[src_node][dest_node][edge["src_year"]] = 0;
             end
-            edges_hash[src_node][dest_node][edge["src_year"]] += edge["edge_weight"];
+            edges_hash[src_node][dest_node][edge["src_year"]] += edge["edge_weight"].to_i();
             if not year_hashed_nodes.has_key?(edge["src_year"])
                 year_hashed_nodes[edge["src_year"].to_s()] = [src_node, dest_node];
             else
@@ -477,8 +477,8 @@ class CongressionalDataSet
             if not edges_hash[hop_node][dest_node].has_key?(edge["src_year"])
                 edges_hash[hop_node][dest_node][edge["src_year"]] = 0;
             end
-            edges_hash[src_node][hop_node][edge["src_year"]] += edge["source_edge_weight"];
-            edges_hash[hop_node][dest_node][edge["dest_year"]] += edge["dest_edge_weight"];
+            edges_hash[src_node][hop_node][edge["src_year"]] += edge["source_edge_weight"].to_i();
+            edges_hash[hop_node][dest_node][edge["dest_year"]] += edge["dest_edge_weight"].to_i();
         end
         return edges_hash, hop_node
     end
