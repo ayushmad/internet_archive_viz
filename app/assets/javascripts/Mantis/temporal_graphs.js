@@ -66,8 +66,11 @@ function TemporalGraphs() {
 	    			 .attr("transform", "translate(" + canvas_dimensions.start_x + ", " + canvas_dimensions.start_y + ")");
 
 	nodes.forEach(function(entry) {
-	    entry.x = canvas_dimensions.height/2;
-	    entry.y = canvas_dimensions.width/2;
+	    if (entry.id == 1) {
+	    	entry.x = canvas_dimensions.width/2;
+	    	entry.y = canvas_dimensions.height/2;
+		entry.fixed = true;
+	        }
 	});
 
 	var force_layout = d3.layout.force()
@@ -75,7 +78,7 @@ function TemporalGraphs() {
 			     .links(links_list)
 			     .size([canvas_dimensions.width, canvas_dimensions.height])
 			     .linkDistance(60)
-			     .charge(-40)
+			     .charge(-100)
 			     .on("tick", tick)
 			     .start();
 
@@ -95,10 +98,7 @@ function TemporalGraphs() {
 	    .data(force_layout.nodes())
 	    .enter().append("g")
 	    .attr("class", function (d) { return "TemporalGraphsnode"})
-	    .attr("node_id", function(d) { if (d.id == 1) {
-						    d.fixed = true;
-					    }
-					    return d.id;})
+	    .attr("node_id", function(d) { return d.id;})
 	    .on("mouseover", mouseover)
 	    .on("mouseout", mouseout)
 	    .call(force_layout.drag);
