@@ -310,3 +310,12 @@
   stroke: #fff;
   stroke-width: 1.5px;
 }
+
+
+.roundedCornerContainer {
+  -webkit-border-radius: 5px 5px 5px 5px; 
+  -moz-border-radius: 5px 5px 5px 5px;
+  -o-border-radius: 5px 5px 5px 5px;
+  border-radius: 5px 5px 5px 5px;
+}
+
