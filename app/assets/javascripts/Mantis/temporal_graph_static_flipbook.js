@@ -75,7 +75,7 @@ function TemporalGraphStaticFlipbook() {
 	var height = this.height;
 	var canvas = this.canvas;
 	var fill_color = d3.scale.category10();
-	var steps = [{'dimension': undefined, 'name': 'All Edges'}];
+	var steps = [];
 	this.current_step = -1;
 
 	/*
