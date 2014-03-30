@@ -558,6 +558,8 @@ class CongressionalDataSet
                 edges_result_list.append({:property => year, :edges => edge_list_year[year]});
             end
         end
+        # Hop is the first element in the node list hence accessing it directly
+        node_list.first["color"] = node_list.length;
         {"nodes" => node_list,
          "graphs" => edges_result_list};
     end
@@ -644,8 +646,12 @@ class CongressionalDataSet
                 raise "Data format not supported by model: node_in_degree"
             end
         elsif model == "multi_view_graph"
-            if data_format == "graph_list" and sub_filters.has_key?(:node_name)
-                search_node = sub_filters[:node_name];
+            if data_format == "graph_list"
+                # Defaulting to house.gov
+                search_node = "house.gov"
+                if sub_filters.has_key?(:node_name)
+                    search_node = sub_filters[:node_name];
+                end
                 domain_filter = sub_filters[:domain_filter];
                 if domain_filter == "No-filter"
                     domain_filter = nil
@@ -655,15 +661,21 @@ class CongressionalDataSet
                 raise "Data format not supported by model: node_in_degree"
             end
         elsif model == "multi_view_domain_graphs"
-            if data_format == "graph_list" and sub_filters.has_key?(:domain)
-                domain = sub_filters[:domain];
+            if data_format == "graph_list"
+                domain = "edu"
+                if sub_filters.has_key?(:domain)
+                    domain = sub_filters[:domain];
+                end
                 get_domain_graph(domain);
             else
                 raise "Data format not supported by model: node_in_degree"
             end
         elsif model == "multi_view_one_hop_domain_graphs"
-            if data_format == "graph_list" and sub_filters.has_key?(:domain)
-                domain = sub_filters[:domain];
+            if data_format == "graph_list"
+                domain = "edu"
+                if sub_filters.has_key?(:domain)
+                    domain = sub_filters[:domain];
+                end
                 get_domain_one_hop_graph(domain);
             else
                 raise "Data format not supported by model: node_in_degree"

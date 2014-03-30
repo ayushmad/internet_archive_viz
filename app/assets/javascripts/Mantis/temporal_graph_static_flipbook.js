@@ -59,11 +59,13 @@ function TemporalGraphStaticFlipbook() {
     };
     TemporalGraphStaticFlipbook.render_step = function(step) {
 	d3.selectAll(".TemporalGraphStaticFlipbooklink")
-	  .style("display", function (d) {
-	      				if (d.dimension == step.dimension) {
-	  					return 'block'; } else {
-	  					return "none"; }
-						});
+	  .style("display", function (d) { if (step.dimension == undefined) {
+	      					return 'block';
+	      				    } else {
+	      					if (d.dimension == step.dimension) {
+	  						return 'block'; } else {
+	  						return "none"; }
+					}});
     }
 
 
@@ -73,7 +75,7 @@ function TemporalGraphStaticFlipbook() {
 	var height = this.height;
 	var canvas = this.canvas;
 	var fill_color = d3.scale.category10();
-	var steps = [];
+	var steps = [{'dimension': undefined, 'name': 'All Edges'}];
 	this.current_step = -1;
 
 	/*
@@ -228,6 +230,7 @@ function TemporalGraphStaticFlipbook() {
 	this.force_layout = force_layout;
 	/* Rendering the legend */
 	this.render_legend(legend_map, fill_color);
+	steps.push({'dimension': undefined, 'name': 'All Edges'});
 	this.steps = steps;
     };
 
@@ -250,11 +253,11 @@ function TemporalGraphStaticFlipbook() {
 	var parent_obj = this;
 	var button_group = canvas.append("g");
 	button_group.append("rect")
-	      .attr('x', width-240)
+	      .attr('x', width-260)
 	      .attr('y', 20)
 	      .attr('rx', 5)
 	      .attr('rx', 5)
-	      .attr('width', 120)
+	      .attr('width', 140)
 	      .attr('height', 30)
 	      .style('fill', '#659EC7')
 	      .style('cursor', 'hand')
@@ -262,24 +265,23 @@ function TemporalGraphStaticFlipbook() {
 	      .on('click', function(d) {
 		  var step = parent_obj.go_to_next_step();
 		  button_group.select('text')
-		    	      .text('Next Step-' + parent_obj.next_step().name);
+		    	      .text('Go To-' + parent_obj.next_step().name);
 	      });
 
 	button_group.append('text')
-	    	    .attr('x', width-240)
+	    	    .attr('x', width-258)
 		    .attr('y', 40)
 		    .style('cursor', 'hand')
 		    .style('cursor', 'pointer')
 		    .on('click', function(d) {
 		        var step = parent_obj.go_to_next_step();
 		        button_group.select('text')
-		      	      .text('Next Step-' + parent_obj.next_step().name);
+		      	      .text('Go To-' + parent_obj.next_step().name);
 		    })
-		    .text('Next Step-' + parent_obj.next_step().name);
+		    .text('Go To-' + parent_obj.next_step().name);
     }
 
     TemporalGraphStaticFlipbook.create_charge_button = function () {
-	// Creating chrage slider
 	var width = this.width;
 	var force_layout = this.force_layout;
 	var height = this.height;
@@ -318,7 +320,7 @@ function TemporalGraphStaticFlipbook() {
 	      .attr('y', 60)
 	      .attr('rx', 5)
 	      .attr('rx', 5)
-	      .attr('width', 100)
+	      .attr('width', 120)
 	      .attr('height', 30)
 	      .attr('class', 'increaseChargeButton')
 	      .style('fill', '#659EC7')
@@ -333,11 +335,11 @@ function TemporalGraphStaticFlipbook() {
 	           .text("Charge " + (new_charge - charge_step)); 
 	      });
 	button_group.append("rect")
-	      .attr('x', width-120)
+	      .attr('x', width-140)
 	      .attr('y', 60)
 	      .attr('rx', 5)
 	      .attr('rx', 5)
-	      .attr('width', 100)
+	      .attr('width', 120)
 	      .attr('height', 30)
 	      .attr('class', 'decreaseChargeButton')
 	      .style('fill', '#659EC7')
@@ -361,7 +363,7 @@ function TemporalGraphStaticFlipbook() {
 		    .text("Charge " + (parseInt(force_layout_charge) + charge_step));
 	
 	button_group.append('text')
-	    	    .attr('x', width-115)
+	    	    .attr('x', width-135)
 		    .attr('y', 80)
 		    .attr('class', 'decreaseChargeText')
 		    .style('cursor', 'hand')
