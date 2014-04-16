@@ -16,13 +16,19 @@ function ScatterPlot() {
 	
 	var legend_container = canvas.append('div')
 				  .attr('id', 'legend_container');
+
 	legend_container.append('div')
 	    	        .attr('id', 'smoother')
 			.attr('title', 'Smoothing');
 
 	var legend_canvas = legend_container.append('div')
 				  .attr('id', 'scatterPlotLegend')
-				  .attr('class', 'roundedCornerContainer');
+				  .attr('class', 'roundedCornerContainer')
+				  .style('height', '100px')
+				  .style('overflow', 'auto')
+				  .style('overflow-x', 'hidden');
+
+	/* Adding jquery ScrollPane */
 	
 	var graph_canvas = canvas.append('div')
 				 .attr('id', 'scatterPlotGraph');
@@ -31,7 +37,7 @@ function ScatterPlot() {
 				 .attr('id', 'scatterPlotXaxis')
 				 .style('position', 'absolute')
 				 .style('top', height -20 + 'px')
-				 .style('left', '10px');
+				 .style('left', '10px')
 
 	var flip_check_box = canvas.append('div')
 	    			   .attr('id', 'scatterPlotk_p_checkbox')
