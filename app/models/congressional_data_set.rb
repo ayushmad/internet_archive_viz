@@ -193,7 +193,7 @@ class CongressionalDataSet
         result = ActiveRecord::Base.connection.execute(sql_query_source);
         result.each { |entry|
            to_node = entry['dest_id'];
-           if to_node == node_id
+           if to_node == node_id or to_node.blank?
                next;
            end
            if not domain_filter.nil? and entry["domain"].chomp == domain_filter
@@ -205,7 +205,7 @@ class CongressionalDataSet
         result = ActiveRecord::Base.connection.execute(sql_query_dest);
         result.each { |entry|
            from_node = entry['src_id'];
-           if from_node == node_id
+           if from_node == node_id or from_node.blank?
                next;
            end
            if not domain_filter.nil? and entry["domain"].chomp == domain_filter
@@ -275,9 +275,13 @@ class CongressionalDataSet
             year_edge_named_map = edge_named_map[year];
             year_nodes = year_edge_named_map["src"].map {|entry| entry[2]} + year_edge_named_map["dest"].map {|entry| entry[2]};
             edges = get_edges_inside_neighbourhood(year_nodes);
-            node_id_map[exception_list[index]] = 1
+            node_id_map[exception_list[index]] = 1;
             edges.each { |edge_entry|
                 if edge_entry["src_id"] == exception_list[index] or edge_entry["dest_id"] == exception_list[index]
+                    next;
+                elsif !node_id_map.has_key?(edge_entry["src_id"].to_s())
+                    next;
+                elsif !node_id_map.has_key?(edge_entry["dest_id"].to_s())
                     next;
                 else
                     edge_map[index]["edges"].append({'src' => node_id_map[edge_entry["src_id"].to_s()],

@@ -34,6 +34,8 @@ function init_views () {
     mantis.register_new_view(my_sp);
     var my_tgsf = TemporalGraphStaticFlipbook();
     mantis.register_new_view(my_tgsf);
+    var my_tgnm = TemporalGraphNodeMovie();
+    mantis.register_new_view(my_tgnm);
 };
 
 function init_models () {
