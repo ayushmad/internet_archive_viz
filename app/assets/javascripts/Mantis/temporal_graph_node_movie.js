@@ -173,6 +173,7 @@ function TemporalGraphNodeMovie() {
 	var node_map = {};
 	nodes.forEach(function(entry) {
 	    entry.exit = true;
+	    entry.fixed = undefined;
 	    node_map[entry["id"]] = entry;
 	});
 	new_nodes.forEach(function(entry) {
@@ -181,6 +182,7 @@ function TemporalGraphNodeMovie() {
 	    	nodes.push(entry);
 	    } else {
 		node_map[entry["id"]].exit = false;
+		node_map[entry["id"]].fixed = true;
 	    }
 	});
 	/* Step 2. Prune old links */
@@ -256,6 +258,8 @@ function TemporalGraphNodeMovie() {
 		    .on('end', function () {
 			/* Cleaning up and resetting stuff */
 			force_layout.nodes(new_nodes);
+			/* Lets Fix them so that they don't shake in next cycle */
+
 			canvas.selectAll('.TemporalGraphNodeMovieNodes, .TemporalGraphNodeMoviePivotNodes')
 	 		      .data(new_nodes, function(d){return d.id;})
 			      .exit()
