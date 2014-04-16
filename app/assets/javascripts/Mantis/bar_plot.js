@@ -13,6 +13,20 @@ function BarPlot() {
 			.attr('id', 'barPlotBaseDiv')
 			.attr('width', width)
 			.attr('height', height);
+	
+	var legend_container = canvas.append('div')
+				  .attr('id', 'legend_container');
+
+	legend_container.append('div')
+	    	        .attr('id', 'smoother')
+			.attr('title', 'Smoothing');
+
+	var legend_canvas = legend_container.append('div')
+				  .attr('id', 'barPlotLegend')
+				  .attr('class', 'roundedCornerContainer')
+				  .style('height', '100px')
+				  .style('overflow', 'auto')
+				  .style('overflow-x', 'hidden');
 	var legend_canvas = canvas.append('div')
 				  .attr('id', 'barPlotLegend')
 				  .attr('class', 'roundedCornerContainer');
