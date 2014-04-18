@@ -66,13 +66,7 @@ function TemporalGraphNodeMovie() {
 	    		     .friction(0.7)
 	    		     .linkDistance(120)
 			     .linkStrength(0.1)
-			     .charge(function(d) {
-				 if (d.exit) {
-				     return -400;
-				 } else {
-				     return -20;
-				 }
-			     })
+			     .charge(-20)
 			     .gravity(0.005)
 			     .size([width, height]);
 
@@ -132,25 +126,27 @@ function TemporalGraphNodeMovie() {
 			   'name': 'pull_nodes',
 			   'fixed': true,
 			   'pn': true, 
-			   'x': width,
+			   'x': width+100,
 			   'y': 0},
 	    		  {'id': node_count+3,
 			   'name': 'pull_nodes',
 			   'fixed': true,
 			   'pn': true, 
 			   'x': 0,
-			   'y': height},
+			   'y': height+100},
 	    		  {'id': node_count+4,
 			   'name': 'pull_nodes',
 			   'fixed': true,
 			   'pn': true, 
-			   'x': width,
-			   'y': height}]
+			   'x': width+100,
+			   'y': height+100}]
 	graph_list.forEach(function(graph) {
 	    node_list = [base_node];
+
 	    pull_nodes.forEach(function(node){
 		node_list.push(node);
 	    });
+	   
 
 	    edge_list = [];
 	    current_node_map = {};
@@ -184,7 +180,7 @@ function TemporalGraphNodeMovie() {
 			    		'pe': true,
 					'exit_link': true});
 			flip_count += 1;
-			if (flip_count >= pull_nodes.length) {
+			if (flip_count >= pull_nodes.length-1) {
 			    flip_count = 0;
 			}
 		}
@@ -211,7 +207,7 @@ function TemporalGraphNodeMovie() {
 	var base_radius = '10px';
 	var transition_step_count = '300';
 	var ecevnt_stopped = false;
-	var max_allowed_duration = 10000;
+	var max_allowed_duration = 9000;
 	var transition_time = max_allowed_duration - 1000;
 
 	/* All Nodes are added to the list */
