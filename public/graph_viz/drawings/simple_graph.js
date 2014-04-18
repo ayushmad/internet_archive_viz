@@ -183,7 +183,7 @@ Drawing.SimpleGraph = function(options) {
     var nodes = [];
     var nodes_list = graph_data["nodes"];
     var node_map = {};
-    var color_table = ['#d62728', '#1f77b4', '#ff7f0e', '#2ca02c'];
+    var color_table = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00'];
     
     var node_id_color_map = {};
     var edge_set = graph_data["graphs"];
