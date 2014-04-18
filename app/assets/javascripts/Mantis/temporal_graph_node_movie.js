@@ -63,7 +63,7 @@ function TemporalGraphNodeMovie() {
 	var height = this.height;
 	this.current_step = 0;
 	var force_layout = d3.layout.force()
-	    		     .friction(0.5)
+	    		     .friction(0.7)
 	    		     .linkDistance(120)
 			     .linkStrength(0.1)
 			     .charge(function(d) {
@@ -211,8 +211,8 @@ function TemporalGraphNodeMovie() {
 	var base_radius = '10px';
 	var transition_step_count = '300';
 	var ecevnt_stopped = false;
-	var max_allowed_duration = 8000;
-	var transition_time = max_allowed_duration/2;
+	var max_allowed_duration = 10000;
+	var transition_time = max_allowed_duration - 1000;
 
 	/* All Nodes are added to the list */
 	/* TODO:- We are doing two merges one based on data join and the other one as this. 
