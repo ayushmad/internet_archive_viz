@@ -1,0 +1,18 @@
+<html>
+    <head>
+	<title> This is a simple Uri encoder </title>
+	<script>
+	    function uri_maker() {
+        	var value = document.getElementById("source_url").value;
+		document.getElementById("result_span").innerHTML = encodeURIComponent(value);
+
+
+	    }
+	</script>
+    </head>
+    <body>
+	<input id="source_url" name="source_url"></input>
+	<button onclick="uri_maker()"></button>
+	<span id="result_span"></span>
+    </body>
+</html>

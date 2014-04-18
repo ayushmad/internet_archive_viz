@@ -184,19 +184,36 @@ Drawing.SimpleGraph = function(options) {
     var nodes_list = graph_data["nodes"];
     var node_map = {};
     var color_table = ['#d62728', '#1f77b4', '#ff7f0e', '#2ca02c'];
+    
+    var node_id_color_map = {};
+    var edge_set = graph_data["graphs"];
+    var color = color_table[0];
+    for(var i = 0; i < edge_set.length; i++) {
+	var edges = edge_set[i]["edges"];
+	color = color_table[i];
+	for(var j =0; j< edges.length; j++) {
+	  source_node = edges[j]["src"];
+	  target_node = edges[j]["dest"];
+          if (!(source_node in node_id_color_map)) {
+	      node_id_color_map[source_node] = color;
+	  }
+          if (!(target_node in node_id_color_map)) {
+	      node_id_color_map[target_node] = color;
+	  }
+	}
+    }
+
 
     for(var i = 0; i < nodes_list.length; i++) {
 	var node = new Node(nodes_list[i]["id"]);
 	node_map[nodes_list[i]["id"]] = node;
 	node.data.title = nodes_list[i]["name"];
-        drawNode(node);
+        drawNode(node, node_id_color_map[nodes_list[i]["id"]]);
 	graph.addNode(node);
 	nodes.push(node);
     }
 
     /* Creating edges */
-    var edge_set = graph_data["graphs"];
-    var color = color_table[0];
     for(var i = 0; i < edge_set.length; i++) {
 	var edges = edge_set[i]["edges"];
 	color = color_table[i];
@@ -223,8 +240,8 @@ Drawing.SimpleGraph = function(options) {
   /**
    *  Create a node object and add it to the scene.
    */
-  function drawNode(node) {
-    var draw_object = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( {  color: Math.random() * 0xffffff, opacity: 0.5 } ) );
+  function drawNode(node, color) {
+    var draw_object = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( {  color: color, opacity: 0.5 } ) );
 
     if(that.show_labels) {
       if(node.data.title != undefined) {
