@@ -82,6 +82,7 @@ function TemporalGraphNodeMovie() {
 	var node_map_id = {};
 	var node_list = [];
 	var link_list = [];
+	var time_step_name = [];
 	var nodes_process_hash = {};
 	var current_node_map = {};
 	var previous_node_map = {};
@@ -142,7 +143,7 @@ function TemporalGraphNodeMovie() {
 			   'y': height+500}]
 	graph_list.forEach(function(graph) {
 	    node_list = [base_node];
-
+	    time_step_name.push(graph.property);
 	    pull_nodes.forEach(function(node){
 		node_list.push(node);
 	    });
@@ -188,6 +189,7 @@ function TemporalGraphNodeMovie() {
 	    previous_node_map = current_node_map;
 	    nodes_process_hash[graph.property] = {'node_list' : node_list, 'edge_list': edge_list};
 	});
+	this.time_step_name = time_step_name;
 	return nodes_process_hash;
     };
 
@@ -290,7 +292,7 @@ function TemporalGraphNodeMovie() {
 	    	  .append('text')
 		  .attr('class', 'TemporalGraphNodeMovieNodesText')
 		  .style('display', function(d) { if(display_text) { return 'block';} else { return 'none';}} )
-	    	  .text(function(d){console.log(d); return d.name})
+	    	  .text(function(d){return d.name})
 
 	var exit_node = canvas.selectAll('.TemporalGraphNodeMovieNodes, .TemporalGraphNodeMoviePivotNodes')
 	 		 .data(new_nodes, function(d){return d.id;})
@@ -351,7 +353,7 @@ function TemporalGraphNodeMovie() {
 	var parent_obj = this;
 	this.display_text = true;
 	var checkbox = container.append("rect")
-	    			.attr("x", width-100)
+	    			.attr("x", width-20)
 				.attr("y", 10)
 				.attr("width", "10")
 				.attr("height", "10")
@@ -371,12 +373,41 @@ function TemporalGraphNodeMovie() {
 					}
 				});
 	container.append("text")
-	    	 .attr("x", width - 250)
+	    	 .attr("x", width - 150)
 		 .attr("y", 20)
 		 .attr("height", "10")
 		 .attr("width", "10")
 		 .text("Hide Labels");
 
+
+    }
+    
+    TemporalGraphNodeMovie.current_time_step_update = function(timestep) {
+	var container = this.canvas;
+	var width = this.width;
+	var height = this.height;
+	var parent_obj = this;
+	if (!(this.time_step_banner_created)) {
+	    this.time_step_banner_created = true;
+	    var checkbox = container.append("rect")
+	    			.attr("x", width- 150)
+				.attr("y", 40)
+				.attr("width", "120")
+				.attr("height", "40")
+				.style("stroke", "#000")
+				.style("fill", "transparent");
+	    container.append("text")
+		     .attr("id", "TemporalGraphNodeMovieTextBanner")
+		     .attr("x", width - 100)
+		     .attr("y", 60)
+		     .attr("width", "100")
+		     .attr("height", 20)
+	    	     .text(timestep);
+	} else {
+	    d3.select("#TemporalGraphNodeMovieTextBanner")
+	      .text(timestep);
+
+	}
 
     }
 
@@ -386,6 +417,7 @@ function TemporalGraphNodeMovie() {
 	this.create_layout();
 	this.step_layout();
 	this.text_visible_checkbox();
+	this.time_step_banner_created = false;
 	parent_obj = this;
 	var node_hash = this.preprocess_nodes(data);
 	if(!Object.keys) Object.keys = function(o){
@@ -399,6 +431,8 @@ function TemporalGraphNodeMovie() {
 	var key_count = 0;
 	function run_animation() {
 	    if (key_count < keys.length) {
+		banner_name = parent_obj.time_step_name[key_count];
+		parent_obj.current_time_step_update(banner_name);
 		parent_obj.animate(node_hash[keys[key_count++]]);
 		setTimeout(run_animation, 10000);
 	    }
