@@ -4,7 +4,10 @@
 * {
     moz-box-sizing: border-box;
     box-sizing: border-box;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif
+}
+body {
+    font-family: sans-serif;
+    font-size: 12pt;
 }
 
 .wrapper {
@@ -83,16 +86,29 @@
 /*
  * These are the visualization related CSS files they need to be arranged later
  */
-
+#VizMenu {
+    height: 40px;
+    width: 90%;
+    margin: 0 auto;
+}
+.wrapper {
+    width: 100%;
+}
 #VizContainer {
-  float: left;
+  overflow: hidden;
   /* border: solid 1px;*/
-  width: 1400px;
+  /* width: 1400px;*/
   height: 800px;
   padding: 5px;
   border: black solid 1px;
   border-radius: 20px;
 
+}
+#DataMenu {
+    width: 225pt;
+    float: right;
+}
+#VizContainer {
 }
 
 .horizontalMenu {
@@ -109,8 +125,6 @@
 
 .horizontalMenu>li>a{
     padding: 5px;
-    font-size: 15px;
-    font-weight: bold;
     color: #333333;
     text-decoration: none;
 }
@@ -132,8 +146,6 @@
 
 .verticalMenu>li>a{
     padding: 5px;
-    font-size: 20px;
-    font-weight: bold;
     color: #333333;
     text-decoration: none;
 }
@@ -187,8 +199,6 @@
 
 .dataModelVerticalMenu>li>a{
     padding: 5px;
-    font-size: 20px;
-    font-weight: bold;
     color: #333333;
     text-decoration: none;
 }
