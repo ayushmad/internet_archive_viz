@@ -312,10 +312,6 @@ function TemporalGraphNodeMovie() {
 			force_layout.nodes(new_nodes);
 			/* Lets Fix them so that they don't shake in next cycle */
 
-			canvas.selectAll('.TemporalGraphNodeMovieNodes, .TemporalGraphNodeMoviePivotNodes')
-	 		      .data(new_nodes, function(d){return d.id;})
-			      .exit()
-			      .remove();
 		    });
 
 
@@ -337,6 +333,10 @@ function TemporalGraphNodeMovie() {
 
 	/*  Also Putting a max time limit to this animation */
 	setTimeout(function () {
+	    canvas.selectAll('.TemporalGraphNodeMovieNodes, .TemporalGraphNodeMoviePivotNodes')
+		  .data(new_nodes, function(d){return d.id;})
+		  .exit()
+		  .remove();
 	    force_layout.stop();
 	}, max_allowed_duration);
 	
