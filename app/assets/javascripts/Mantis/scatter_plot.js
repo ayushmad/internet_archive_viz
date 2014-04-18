@@ -28,7 +28,6 @@ function ScatterPlot() {
 				  .style('overflow', 'auto')
 				  .style('overflow-x', 'hidden');
 
-	/* Adding jquery ScrollPane */
 	
 	var graph_canvas = canvas.append('div')
 				 .attr('id', 'scatterPlotGraph');
@@ -139,6 +138,7 @@ function ScatterPlot() {
 	var xaxis_canvas = this.xaxis_canvas;
 	var tick_values = this.tick_values;
 	var tick_list = this.tick_list;
+	var parent_obj = this;
 	Rickshaw.Series.zeroFill(stacked_data)
 	var graph = new Rickshaw.Graph({
 	        element: document.getElementById('scatterPlotGraph'),
@@ -160,11 +160,10 @@ function ScatterPlot() {
 		tickSpacing: 1,
 		tickFormat: function(x) {return tick_list[x];}
 	});
-        /*	
 	var hoverDetail = new Rickshaw.Graph.HoverDetail( {
 	graph: graph,
-
-	});*/
+	xFormatter: function(x) {return tick_list[x];}
+	});
 	
 	var shelving = new Rickshaw.Graph.Behavior.Series.Toggle( {
 	graph: graph,
@@ -174,14 +173,6 @@ function ScatterPlot() {
 	graph.render();
     };
 
-    ScatterPlot.clean_container = function () {
-	$('#scatterPlotLegend').empty()
-			       .attr('class', 'roundedCornerContainer');
-	$('#scatterPlotGraph').empty('')
-	    		      .attr('class', '');
-	$('#scatterPlotXaxis').empty('')
-	    		      .attr('class', '');
-    }
     ScatterPlot.refreash_layout = function (){
 	d3.select(this.container).html('');
     	this.create_layout();
@@ -195,7 +186,8 @@ function ScatterPlot() {
 	    // Some Activity So need to check if 
 	    // if its flipped
 	    var selection_state = d3.select('#scatterPlotk_p_checkboxElement').property('checked');
-	    parent_obj.clean_container();
+	    parent_obj.flip_state = selection_state;
+	    parent_obj.refreash_layout();
 	    var stacked_data = undefined;
 	    if (selection_state) {
 	    	stacked_data = parent_obj.process_edges_k_p(parent_obj.data);
@@ -208,6 +200,11 @@ function ScatterPlot() {
 	    .attr('type', 'checkbox')
 	    .attr('id', 'scatterPlotk_p_checkboxElement')
 	    .attr("name", "k_p_checkbox")
+	    .property('checked', function(d){ if(parent_obj.flip_state) {
+	    					return true;}
+	    			   	      else {
+					      	return false;}
+	    				     })
 	    .on('click', flip_function);
 	flip_div.append('label')
 		.attr('for', 'k_p_checkbox')
@@ -220,6 +217,7 @@ function ScatterPlot() {
 	this.data = data;
 	this.create_layout();
 	this.add_checkbox();
+	this.flip_state = false;
 	stacked_data = this.process_edges(data);
 	this.render_layout(stacked_data);
     };

@@ -201,9 +201,9 @@ function TemporalGraphNodeMovie() {
 	var nodes = force_layout.nodes();
 	var links = force_layout.links();
 	/* Setting Animation Constants */
-	var enter_nodes = "green";
+	var enter_nodes = '#2ca02c';
 	var exit_nodes = "red";
-	var update_nodes = "blue";
+	var update_nodes = "#1f77b4";
 	var base_radius = '10px';
 	var transition_step_count = '300';
 	var ecevnt_stopped = false;

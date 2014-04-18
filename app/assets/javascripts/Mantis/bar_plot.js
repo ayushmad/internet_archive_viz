@@ -27,9 +27,6 @@ function BarPlot() {
 				  .style('height', '100px')
 				  .style('overflow', 'auto')
 				  .style('overflow-x', 'hidden');
-	var legend_canvas = canvas.append('div')
-				  .attr('id', 'barPlotLegend')
-				  .attr('class', 'roundedCornerContainer');
 	
 	var graph_canvas = canvas.append('div')
 				 .attr('id', 'barPlotGraph');
@@ -161,11 +158,10 @@ function BarPlot() {
 		tickSpacing: 1,
 		tickFormat: function(x) {return tick_list[x];}
 	});
-	/*	
 	var hoverDetail = new Rickshaw.Graph.HoverDetail( {
 	graph: graph,
-        xFormatter: function(x) { return tick_list[x]; },
-	});*/
+	xFormatter: function(x) {return tick_list[x];}
+	});
 	
 	var shelving = new Rickshaw.Graph.Behavior.Series.Toggle( {
 	graph: graph,
@@ -175,12 +171,6 @@ function BarPlot() {
 	graph.render();
     };
 
-    BarPlot.clean_container = function () {
-	$('#barPlotLegend').empty();
-	$('#barPlotGraph').empty('');
-	$('#barPlotXaxis').empty('');
-    }
-    
     BarPlot.refreash_layout = function (){
 	d3.select(this.container).html('');
     	this.create_layout();
@@ -194,7 +184,8 @@ function BarPlot() {
 	    // Some Activity So need to check if 
 	    // if its flipped
 	    var selection_state = d3.select('#barPlotk_p_checkboxElement').property('checked');
-	    parent_obj.clean_container();
+	    parent_obj.flip_state = selection_state;
+	    parent_obj.refreash_layout();
 	    var stacked_data = undefined;
 	    if (selection_state) {
 	    	stacked_data = parent_obj.process_edges_k_p(parent_obj.data);
@@ -207,6 +198,11 @@ function BarPlot() {
 	    .attr('type', 'checkbox')
 	    .attr('id', 'barPlotk_p_checkboxElement')
 	    .attr("name", "k_p_checkbox")
+	    .property('checked', function(d){ if(parent_obj.flip_state) {
+	    					return true;}
+	    			   	      else {
+					      	return false;}
+	    				     })
 	    .on('click', flip_function);
 	flip_div.append('label')
 		.attr('for', 'k_p_checkbox')
@@ -219,6 +215,7 @@ function BarPlot() {
 	this.data = data;
 	this.create_layout();
 	this.add_checkbox();
+	this.flip_state = false;
 	stacked_data = this.process_edges(data);
 	this.render_layout(stacked_data);
     };
