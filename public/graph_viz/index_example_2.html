@@ -41,7 +41,7 @@
             drawing = new Drawing.SimpleGraph({layout: '2d', selection: true, numNodes: 50, showStats: true, showInfo: true, source_url: source_url});
             break;
           case 1:
-            drawing = new Drawing.SimpleGraph({layout: '3d', selection: true, numNodes: 50, graphLayout:{attraction: 5, repulsion: 0.5}, showStats: true, showInfo: true, source_url: source_url});
+            drawing = new Drawing.SimpleGraph({layout: '3d', selection: true, numNodes: 50, graphLayout:{attraction: 1, repulsion: 0.5}, showStats: true, showInfo: true, source_url: source_url});
             break;
           default:
             drawing = new Drawing.SimpleGraph({layout: '3d', selection: true, numNodes: 50, showStats: true, showInfo: true, source_url: source_url});
@@ -92,7 +92,7 @@
         <p>
           <input type="button" value="Stop layout" onclick="drawing.stop_calculating();">
 	</p>
-	<label for="source_url">Enter Source Url</label><input id="source_url" type="text" value="/congressional_dataset?data_format=graph_list&model=multi_view_graph&node_name=-06.ibm.com&domain_filter=No-filter"></input>
+	<label for="source_url">Enter Source Url</label><input id="source_url" type="text" value="/congressional_dataset?data_format=graph_list&model=multi_view_graph&node_name=house.gov&domain_filter=No-filter"></input>
       </form>
     </div>
 
