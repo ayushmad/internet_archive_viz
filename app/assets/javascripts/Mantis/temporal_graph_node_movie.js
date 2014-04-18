@@ -210,8 +210,8 @@ function TemporalGraphNodeMovie() {
 	var base_radius = '10px';
 	var transition_step_count = '300';
 	var ecevnt_stopped = false;
-	var max_allowed_duration = 9000;
-	var transition_time = max_allowed_duration - 1000;
+	var max_allowed_duration = 9500;
+	var transition_time = max_allowed_duration - 500;
 
 	/* All Nodes are added to the list */
 	/* TODO:- We are doing two merges one based on data join and the other one as this. 
