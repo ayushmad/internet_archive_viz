@@ -273,10 +273,12 @@ function TemporalGraphNodeMovie() {
 	      .attr("x2", function(d) { return d.target.x; })
 	      .attr("y2", function(d) { return d.target.y; });
 
-	   node.attr("transform", function(d) { if (!d.fixed) {
-		  			          d.x = Math.max(20, Math.min(width - 20, d.x));
-		  				  d.y = Math.max(20, Math.min(height - 20, d.y));
-						 }
+	   node.attr("transform", function(d) { if (!d.exit) {
+	       					  if (!d.fixed) {
+		  			             d.x = Math.max(20, Math.min(width - 20, d.x));
+		  				     d.y = Math.max(20, Math.min(height - 20, d.y));
+						  }
+	   					}
 		  				return "translate(" + d.x + "," + d.y + ")"; });
 	}
 
