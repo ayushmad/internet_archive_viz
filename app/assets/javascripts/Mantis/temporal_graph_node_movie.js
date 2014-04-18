@@ -126,20 +126,20 @@ function TemporalGraphNodeMovie() {
 			   'name': 'pull_nodes',
 			   'fixed': true,
 			   'pn': true, 
-			   'x': width+100,
+			   'x': width+500,
 			   'y': 0},
 	    		  {'id': node_count+3,
 			   'name': 'pull_nodes',
 			   'fixed': true,
 			   'pn': true, 
 			   'x': 0,
-			   'y': height+100},
+			   'y': height+500},
 	    		  {'id': node_count+4,
 			   'name': 'pull_nodes',
 			   'fixed': true,
 			   'pn': true, 
-			   'x': width+100,
-			   'y': height+100}]
+			   'x': width+500,
+			   'y': height+500}]
 	graph_list.forEach(function(graph) {
 	    node_list = [base_node];
 
@@ -198,6 +198,7 @@ function TemporalGraphNodeMovie() {
 	var width = this.width;
 	var height = this.height;
 	var canvas = this.canvas;
+	var display_text = this.display_text;
 	var nodes = force_layout.nodes();
 	var links = force_layout.links();
 	/* Setting Animation Constants */
@@ -271,20 +272,25 @@ function TemporalGraphNodeMovie() {
 	var node = canvas.selectAll('.TemporalGraphNodeMovieNodes, .TemporalGraphNodeMoviePivotNodes')
 	 		 .data(nodes, function(d){return d.id;});
 	
-	node.enter()
-	   .append('g')
-	   .attr('class', function (d) {if (d.pn == true) { return 'TemporalGraphNodeMoviePivotNodes';}
+	var enter_node = node.enter()
+	   		     .append('g')
+	   		     .attr('class', function (d) {if (d.pn == true) { return 'TemporalGraphNodeMoviePivotNodes';}
 					else{ return 'TemporalGraphNodeMovieNodes';}})
-	   .attr('id', function(d) { return d.id;})
-	   .call(force_layout.drag)
-	   .filter(function(d) { if (d.pn) { return false; } else { return true;}})
+	   		     .attr('id', function(d) { return d.id;})
+	 		     .call(force_layout.drag);
+	enter_node.filter(function(d) { if (d.pn) { return false; } else { return true;}})
 	   .append('circle')
 	   .style('fill', enter_nodes)
 	   .attr('r', base_radius)
-	   .text(function (d) { return d.text; })
 	   .transition()
 	   .duration(transition_time)
 	   .style('fill', update_nodes);
+	
+	enter_node.filter(function(d) { if (d.pn) { return false; } else { return true;}})
+	    	  .append('text')
+		  .attr('class', 'TemporalGraphNodeMovieNodesText')
+		  .style('display', function(d) { if(display_text) { return 'block';} else { return 'none';}} )
+	    	  .text(function(d){console.log(d); return d.name})
 
 	var exit_node = canvas.selectAll('.TemporalGraphNodeMovieNodes, .TemporalGraphNodeMoviePivotNodes')
 	 		 .data(new_nodes, function(d){return d.id;})
@@ -338,11 +344,48 @@ function TemporalGraphNodeMovie() {
 	this.transition(entry["node_list"], entry["edge_list"]);
     };
 
+    TemporalGraphNodeMovie.text_visible_checkbox = function() {
+	var container = this.canvas;
+	var width = this.width;
+	var height = this.height;
+	var parent_obj = this;
+	this.display_text = true;
+	var checkbox = container.append("rect")
+	    			.attr("x", width-100)
+				.attr("y", 10)
+				.attr("width", "10")
+				.attr("height", "10")
+				.style("fill", "transparent")
+				.style("stroke", "#000000")
+				.on("click", function() {
+					if (parent_obj.display_text) {
+					    parent_obj.display_text = false;
+					    checkbox.style("fill", "#000");
+					    d3.selectAll(".TemporalGraphNodeMovieNodesText")
+				    	      .style("display", "none");
+					} else {
+					    parent_obj.display_text = true;
+					    checkbox.style("fill", "transparent");
+					    d3.selectAll(".TemporalGraphNodeMovieNodesText")
+				    	      .style("display", "block");
+					}
+				});
+	container.append("text")
+	    	 .attr("x", width - 250)
+		 .attr("y", 20)
+		 .attr("height", "10")
+		 .attr("width", "10")
+		 .text("Hide Labels");
+
+
+    }
+
     TemporalGraphNodeMovie.message_handler[mantis.MessageType.SOURCE_UPDATE] = function (data) {
 	// Clean Container before drawing
 	d3.select(this.container).html('');
 	this.create_layout();
 	this.step_layout();
+	this.text_visible_checkbox();
 	parent_obj = this;
 	var node_hash = this.preprocess_nodes(data);
 	if(!Object.keys) Object.keys = function(o){
