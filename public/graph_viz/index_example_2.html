@@ -15,7 +15,6 @@
 <html>
   <head>
     <title>Graph Visualization</title>
-    <script type="text/javascript" src="jquery-2.1.0.min.js"></script>
     <script type="text/javascript" src="Graph.js"></script>
     <script type="text/javascript" src="webgl-frameworks/three.min.js"></script>
     <script type="text/javascript" src="utils/Stats.js"></script>
@@ -93,7 +92,7 @@
         <p>
           <input type="button" value="Stop layout" onclick="drawing.stop_calculating();">
 	</p>
-	<label for="source_url">Enter Source Url</label><input id="source_url" type="text" value="http://localhost:3000/congressional_dataset?data_format=graph_list&model=multi_view_graph&node_name=-06.ibm.com&domain_filter=No-filter"></input>
+	<label for="source_url">Enter Source Url</label><input id="source_url" type="text" value="/congressional_dataset?data_format=graph_list&model=multi_view_graph&node_name=-06.ibm.com&domain_filter=No-filter"></input>
       </form>
     </div>
 
