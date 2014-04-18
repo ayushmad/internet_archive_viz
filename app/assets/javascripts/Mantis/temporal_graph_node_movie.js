@@ -63,6 +63,7 @@ function TemporalGraphNodeMovie() {
 	var height = this.height;
 	this.current_step = 0;
 	var force_layout = d3.layout.force()
+	    		     .friction(0.5)
 	    		     .linkDistance(120)
 			     .linkStrength(0.1)
 			     .charge(function(d) {
@@ -88,6 +89,8 @@ function TemporalGraphNodeMovie() {
 	var node_list = [];
 	var link_list = [];
 	var nodes_process_hash = {};
+	var current_node_map = {};
+	var previous_node_map = {};
 	function init_random_boundry_position(node) {
 	    var side_choice = Math.random();
 	    if (side_choice < 0.25) {
@@ -104,11 +107,13 @@ function TemporalGraphNodeMovie() {
 	   	node.x = 0;
 	    }
 	}
+	var node_count = 1;
 	data.nodes.forEach(function(node) {
 	   init_random_boundry_position(node);
 	   node.px = NaN;
 	   node.py = NaN;
 	   node_map_id[node.id] = node;
+	   node_count += 1;
 	});
 	var graph_list = data.graphs;
 	var base_node  = {'id': 0, 
@@ -117,8 +122,36 @@ function TemporalGraphNodeMovie() {
 			  'pn': true, 
 			  'x': width/2, 
 			  'y': height/2};
+	var pull_nodes = [{'id': node_count+1,
+			   'name': 'pull_nodes',
+			   'fixed': true,
+			   'pn': true, 
+			   'x': 0,
+			   'y': 0},
+	    		  {'id': node_count+2,
+			   'name': 'pull_nodes',
+			   'fixed': true,
+			   'pn': true, 
+			   'x': width,
+			   'y': 0},
+	    		  {'id': node_count+3,
+			   'name': 'pull_nodes',
+			   'fixed': true,
+			   'pn': true, 
+			   'x': 0,
+			   'y': height},
+	    		  {'id': node_count+4,
+			   'name': 'pull_nodes',
+			   'fixed': true,
+			   'pn': true, 
+			   'x': width,
+			   'y': height}]
 	graph_list.forEach(function(graph) {
 	    node_list = [base_node];
+	    pull_nodes.forEach(function(node){
+		node_list.push(node);
+	    });
+
 	    edge_list = [];
 	    current_node_map = {};
 	    graph.edges.forEach(function(edge) {
@@ -128,20 +161,35 @@ function TemporalGraphNodeMovie() {
 		edge_list.push({'source': source_node,
 		    		'target': dest_node});
 		if (!(edge.src in current_node_map)) {
-			current_node_map[edge.src] = true;
+			current_node_map[edge.src] = source_node;
 			node_list.push(source_node);
 			edge_list.push({'source': source_node,
 			    		'target': base_node,
 			    		'pe': true});
 		}
 		if (!(edge.dest in current_node_map)) {
-			current_node_map[edge.dest] = true;
+			current_node_map[edge.dest] = dest_node;
 			node_list.push(dest_node);
 			edge_list.push({'source': dest_node,
 			    		'target': base_node,
 			    		'pe': true});
 		}
 	    });
+	    /* Adding Pull edges */
+	    var flip_count = 0;
+	    for(var node_id in previous_node_map) {
+		if (!(current_node_map[node_id])) {
+			edge_list.push({'source': previous_node_map[node_id],
+			    		'target': pull_nodes[flip_count],
+			    		'pe': true,
+					'exit_link': true});
+			flip_count += 1;
+			if (flip_count >= pull_nodes.length) {
+			    flip_count = 0;
+			}
+		}
+	    }
+	    previous_node_map = current_node_map;
 	    nodes_process_hash[graph.property] = {'node_list' : node_list, 'edge_list': edge_list};
 	});
 	return nodes_process_hash;

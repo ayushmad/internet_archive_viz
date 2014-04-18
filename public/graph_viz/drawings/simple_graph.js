@@ -137,7 +137,11 @@ Drawing.SimpleGraph = function(options) {
         selected: function(obj) {
           // display info
           if(obj != null) {
-            info_text.select = "Object " + obj.id;
+	      if (!(obj.name == "")) {  
+            	info_text.select = "Node Name " + obj.name;
+	      } else {
+		info_text.select = "Object Id " + obj.id
+	      }
           } else {
             delete info_text.select;
           }
@@ -184,9 +188,9 @@ Drawing.SimpleGraph = function(options) {
     for(var i = 0; i < nodes_list.length; i++) {
 	var node = new Node(nodes_list[i]["id"]);
 	node_map[nodes_list[i]["id"]] = node;
-	graph.addNode(node);
-        drawNode(node);
 	node.data.title = nodes_list[i]["name"];
+        drawNode(node);
+	graph.addNode(node);
 	nodes.push(node);
     }
 
@@ -241,6 +245,9 @@ Drawing.SimpleGraph = function(options) {
     }
 
     draw_object.id = node.id;
+    if (node.data.title) {
+	draw_object.name = node.data.title;
+    }
     node.data.draw_object = draw_object;
     node.position = draw_object.position;
     scene.add( node.data.draw_object );
