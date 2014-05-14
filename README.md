@@ -1,6 +1,6 @@
-Internet Archive Vitalization
-=============================
-Projects to create temporal visualization web graph.
+Internet Archive Visualization
+==============================
+Project to create temporal visualization web graph.
 
 Website
 =======
@@ -154,3 +154,7 @@ Data Format Supported :- Multi Graph
 
 The structure shows different nodes in path between two nodes.
 
+Mantis
+======
+
+[Mantis](https://github.com/ayushmad/internet_archive_viz/tree/master/app/assets/javascripts/Mantis) is a JavaScript library in
