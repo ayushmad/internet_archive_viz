@@ -35,3 +35,13 @@ to server.
 # Mantis View
 View is a abstract class which must be extend by a visualizations.
 Any visualizations must extend the base class.
+
+How To Add A New Visualization
+==============================
+
+1. Create a Class which extends the Mantis.ViewBase.
+2. Controller interacts with a view using two messages
+   message handler.
+   * Provide a message handler for SOURCE UPDATE message.
+   * Provide a message handler for VIEW INIT message.
+3. You can create the visualization as a call back to these messages.

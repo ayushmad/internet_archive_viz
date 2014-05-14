@@ -157,8 +157,31 @@ The structure shows different nodes in path between two nodes.
 Mantis
 ======
 
-[Mantis](Mantis.md) is a JavaScript library developed as a part of the project.
+[Mantis](app/assets/javascripts/Mantis/Mantis.md) is a JavaScript library developed as a part of the project.
 It allows visualization to be created in isolation of Data being represented by server.
 The each visualization supports a particular data format and as long as the server 
 adheres to the format the JavaScript framework allows the data to be displayed.
-For More description please visit [here](Mantis.md).
+For More description please visit [here](app/assets/javascripts/Mantis/Mantis.md).
+
+
+DataBase Design
+===============
+
+# CongressNodes
+
+| NODE URL | YEAR | NODE In-Degree | NODE OUT-Degree | NODE TLD | NODE IP MAP |
+|----------|------|----------------|-----------------|----------|-------------|
+|Node hostname | timestamp of the node | Number Of Edges Coming In | Number of Edges Going Out | Node Top Level Domain| Node Ip Map |
+
+# Congress Edges
+
+| SRC ID | Dest ID | Weight |
+|--------|---------|--------|
+| source node id | destination node id | weight |
+
+# CongressTLDAggregate
+
+| NODE TLD | Year | Number of Edges |
+|----------|------|-----------------|
+| top level domain | timestamp | number of edges |
+
