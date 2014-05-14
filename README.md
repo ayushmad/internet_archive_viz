@@ -157,4 +157,8 @@ The structure shows different nodes in path between two nodes.
 Mantis
 ======
 
-[Mantis](https://github.com/ayushmad/internet_archive_viz/tree/master/app/assets/javascripts/Mantis) is a JavaScript library in
+[Mantis](Mantis.md) is a JavaScript library developed as a part of the project.
+It allows visualization to be created in isolation of Data being represented by server.
+The each visualization supports a particular data format and as long as the server 
+adheres to the format the JavaScript framework allows the data to be displayed.
+For More description please visit [here](Mantis.md).
